@@ -28,6 +28,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation("com.juul.kable:core:0.25.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material)
@@ -40,6 +42,9 @@ kotlin {
                 api("androidx.activity:activity-compose:1.6.1")
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.9.0")
+                implementation(libs.nordic.blek.scanner)
+                implementation(libs.nordic.permissions.ble)
+                implementation(libs.nordic.permissions.internet)
             }
         }
         val iosX64Main by getting
@@ -67,10 +72,10 @@ android {
         targetSdk = (findProperty("android.targetSdk") as String).toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlin {
-        jvmToolchain(11)
+        jvmToolchain(17)
     }
 }

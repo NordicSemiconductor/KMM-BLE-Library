@@ -21,8 +21,11 @@ pluginManagement {
 
         id("com.android.application").version(agpVersion)
         id("com.android.library").version(agpVersion)
+        id("org.jetbrains.kotlin.kapt").version(kotlinVersion)
 
         id("org.jetbrains.compose").version(composeVersion)
+        id("no.nordicsemi.android.gradle.application").version("1.7.1")
+        id("no.nordicsemi.android.gradle.hilt").version("1.7.1")
     }
 }
 
@@ -30,6 +33,12 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven("https://jitpack.io")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    }
+    versionCatalogs {
+        create("libs") {
+            from("no.nordicsemi.android.gradle:version-catalog:1.9.1")
+        }
     }
 }
