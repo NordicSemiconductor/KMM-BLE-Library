@@ -1,4 +1,4 @@
-rootProject.name = "MyApplication"
+rootProject.name = "Blinky KMM"
 
 include(":androidApp")
 include(":shared")

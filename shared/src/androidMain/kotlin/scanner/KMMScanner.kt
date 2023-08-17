@@ -10,8 +10,8 @@ actual class KMMScanner(private val context: Context) {
 
     @SuppressLint("MissingPermission")
     actual fun scan(): Flow<KMMDevice> {
-
         val scanner = BleScanner(context)
+
         return scanner.scan().map { KMMDevice(it.device.name, it.device.address) }
     }
 }

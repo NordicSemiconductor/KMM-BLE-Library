@@ -30,6 +30,9 @@ kotlin {
             dependencies {
                 implementation("com.juul.kable:core:0.25.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                implementation("io.insert-koin:koin-core:3.4.3")
+                implementation("io.insert-koin:koin-compose:1.0.4")
+                implementation("io.github.aakira:napier:2.6.1")
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material)

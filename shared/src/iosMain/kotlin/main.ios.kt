@@ -5,7 +5,3 @@ import scanner.KMMScanner
 actual fun getPlatformName(): String = "iOS"
 
 fun MainViewController() = ComposeUIViewController { App(ScannerViewModel(KMMScanner())) }
-
-fun aaa() {
-    val a= CBCentralManager()
-}
