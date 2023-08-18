@@ -2,6 +2,6 @@ package scanner
 
 import org.koin.dsl.module
 
-val CommonModule = module {
+val ScannerSharedModule = module {
     single { KMMScannerAggregator(get()) }
 }
