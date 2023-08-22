@@ -12,6 +12,6 @@ actual class KMMScanner(private val context: Context) {
     actual fun scan(): Flow<KMMDevice> {
         val scanner = BleScanner(context)
 
-        return scanner.scan().map { KMMDevice(it.device.name, it.device.address) }
+        return scanner.scan().map { KMMDevice(it.device) }
     }
 }

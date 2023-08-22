@@ -1,6 +1,6 @@
 package scanner
 
-data class KMMDevice(
-    val name: String,
-    val address: String
-)
+expect class KMMDevice {
+    val name: String
+    val address: String?
+}
