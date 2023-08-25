@@ -38,6 +38,7 @@ kotlin {
                 implementation(compose.material)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
+                implementation("com.benasher44:uuid:0.8.0")
             }
         }
         val androidMain by getting {
@@ -46,8 +47,10 @@ kotlin {
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.9.0")
                 implementation(libs.nordic.blek.scanner)
+                implementation(libs.nordic.blek.client)
                 implementation(libs.nordic.permissions.ble)
                 implementation(libs.nordic.permissions.internet)
+                implementation("com.benasher44:uuid:0.8.0")
             }
         }
         val iosX64Main by getting

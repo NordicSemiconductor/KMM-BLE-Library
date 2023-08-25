@@ -1,5 +1,7 @@
 package client
 
-actual class KMMClient {
+import platform.CoreBluetooth.CBPeripheral
+
+actual class KMMClient(val peripheral: CBPeripheral) {
 
 }
