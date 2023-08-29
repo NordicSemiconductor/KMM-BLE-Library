@@ -46,9 +46,4 @@ enum class KMMWriteType {
      * Write characteristic without requiring a response by the remote device.
      */
     NO_RESPONSE,
-
-    /**
-     * Write characteristic including authentication signature.
-     */
-    SIGNED;
 }

@@ -9,11 +9,13 @@ import platform.CoreBluetooth.CBCentralManager
 import platform.CoreBluetooth.CBCentralManagerDelegateProtocol
 import platform.CoreBluetooth.CBCentralManagerStatePoweredOn
 import platform.CoreBluetooth.CBCharacteristic
+import platform.CoreBluetooth.CBDescriptor
 import platform.CoreBluetooth.CBManagerState
 import platform.CoreBluetooth.CBManagerStateUnknown
 import platform.CoreBluetooth.CBPeripheral
 import platform.CoreBluetooth.CBPeripheralDelegateProtocol
 import platform.CoreBluetooth.CBService
+import platform.Foundation.NSData
 import platform.Foundation.NSError
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
@@ -31,8 +33,14 @@ actual class KMMClient(
     private var onDeviceDisconnected: (() -> Unit)? = null
     private var onServicesDiscovered: ((OperationStatus) -> Unit)? = null
 
+    private var services: KMMServices? = null
+
     private val _bleState = MutableStateFlow(CBManagerStateUnknown)
     val bleState: StateFlow<CBManagerState> = _bleState.asStateFlow()
+
+    private fun onEvent(event: IOSGattEvent) {
+        services?.onEvent(event)
+    }
 
     actual suspend fun connect() {
         bleState.first { it == CBCentralManagerStatePoweredOn }
@@ -59,6 +67,7 @@ actual class KMMClient(
         return suspendCoroutine { continuation ->
             onServicesDiscovered = {
                 peripheral.services?.toDomain()?.let {
+                    services = it
                     continuation.resume(it)
                 } ?: run {
                     continuation.resumeWithException(GattException())
@@ -124,6 +133,38 @@ actual class KMMClient(
         error: NSError?,
     ) {
         onDeviceDisconnected?.invoke()
+    }
+
+    override fun peripheral(
+        peripheral: CBPeripheral,
+        didUpdateValueForCharacteristic: CBCharacteristic,
+        error: NSError?
+    ) {
+        onEvent(OnGattCharacteristicRead(peripheral, didUpdateValueForCharacteristic.value as NSData))
+    }
+
+    override fun peripheral(
+        peripheral: CBPeripheral,
+        didWriteValueForCharacteristic: CBCharacteristic,
+        error: NSError?
+    ) {
+        onEvent(OnGattCharacteristicWrite(peripheral, didWriteValueForCharacteristic.value as NSData))
+    }
+
+    override fun peripheral(
+        peripheral: CBPeripheral,
+        didWriteValueForDescriptor: CBDescriptor,
+        error: NSError?
+    ) {
+        onEvent(OnGattDescriptorWrite(peripheral, didWriteValueForDescriptor.value as NSData))
+    }
+
+    override fun peripheral(
+        peripheral: CBPeripheral,
+        didUpdateValueForDescriptor: CBDescriptor,
+        error: NSError?
+    ) {
+        onEvent(OnGattDescriptorRead(peripheral, didUpdateValueForDescriptor.value as NSData))
     }
 
     private fun getOperationStatus(error: NSError?): OperationStatus {
