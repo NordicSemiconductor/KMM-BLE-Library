@@ -23,7 +23,6 @@ actual class KMMCharacteristic(private val characteristic: ClientBleGattCharacte
         val kmmWriteType = when (writeType) {
             KMMWriteType.DEFAULT -> BleWriteType.DEFAULT
             KMMWriteType.NO_RESPONSE -> BleWriteType.NO_RESPONSE
-            KMMWriteType.SIGNED -> BleWriteType.SIGNED
         }
         characteristic.write(DataByteArray(value), kmmWriteType)
     }
