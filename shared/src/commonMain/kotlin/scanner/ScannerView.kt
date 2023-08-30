@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
@@ -94,16 +94,16 @@ fun DeviceListItem(
             name?.let { name ->
                 Text(
                     text = name,
-                    style = MaterialTheme.typography.h1
+                    style = MaterialTheme.typography.titleMedium
                 )
             } ?: Text(
                 text = "Unknown",
-                style = MaterialTheme.typography.h1,
+                style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.alpha(0.7f)
             )
             Text(
                 text = address,
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.bodyMedium
             )
         }
 
@@ -115,23 +115,23 @@ fun DeviceListItem(
 fun CircularIcon(
     painter: ImageVector,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colors.secondary,
+    backgroundColor: Color = MaterialTheme.colorScheme.secondary,
     enabled: Boolean = true,
 ) {
     Image(
         imageVector = painter,
         contentDescription = null,
         colorFilter = if (enabled) {
-            ColorFilter.tint(MaterialTheme.colors.contentColorFor(backgroundColor))
+            ColorFilter.tint(MaterialTheme.colorScheme.contentColorFor(backgroundColor))
         } else {
-            ColorFilter.tint(MaterialTheme.colors.onSurface.copy(alpha = 0.38f))
+            ColorFilter.tint(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f))
         },
         modifier = modifier
             .background(
                 color = if (enabled) {
                     backgroundColor
                 } else {
-                    MaterialTheme.colors.onSurface.copy(alpha = 0.12f)
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
                 },
                 shape = CircleShape
             )

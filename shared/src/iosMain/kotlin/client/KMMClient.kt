@@ -18,14 +18,15 @@ import platform.CoreBluetooth.CBService
 import platform.Foundation.NSData
 import platform.Foundation.NSError
 import platform.darwin.NSObject
+import scanner.KMMDevice
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 @Suppress("CONFLICTING_OVERLOADS")
-actual class KMMClient(
-    private val peripheral: CBPeripheral,
-) : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDelegateProtocol {
+actual class KMMClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDelegateProtocol {
+
+    private lateinit var peripheral: CBPeripheral
 
     private val manager = CBCentralManager()
 
@@ -42,7 +43,8 @@ actual class KMMClient(
         services?.onEvent(event)
     }
 
-    actual suspend fun connect() {
+    actual suspend fun connect(device: KMMDevice) {
+        peripheral = device.peripheral
         bleState.first { it == CBCentralManagerStatePoweredOn }
         return suspendCoroutine { continuation ->
             onDeviceConnected = {
@@ -138,23 +140,33 @@ actual class KMMClient(
     override fun peripheral(
         peripheral: CBPeripheral,
         didUpdateValueForCharacteristic: CBCharacteristic,
-        error: NSError?
+        error: NSError?,
     ) {
-        onEvent(OnGattCharacteristicRead(peripheral, didUpdateValueForCharacteristic.value as NSData))
+        onEvent(
+            OnGattCharacteristicRead(
+                peripheral,
+                didUpdateValueForCharacteristic.value as NSData
+            )
+        )
     }
 
     override fun peripheral(
         peripheral: CBPeripheral,
         didWriteValueForCharacteristic: CBCharacteristic,
-        error: NSError?
+        error: NSError?,
     ) {
-        onEvent(OnGattCharacteristicWrite(peripheral, didWriteValueForCharacteristic.value as NSData))
+        onEvent(
+            OnGattCharacteristicWrite(
+                peripheral,
+                didWriteValueForCharacteristic.value as NSData
+            )
+        )
     }
 
     override fun peripheral(
         peripheral: CBPeripheral,
         didWriteValueForDescriptor: CBDescriptor,
-        error: NSError?
+        error: NSError?,
     ) {
         onEvent(OnGattDescriptorWrite(peripheral, didWriteValueForDescriptor.value as NSData))
     }
@@ -162,7 +174,7 @@ actual class KMMClient(
     override fun peripheral(
         peripheral: CBPeripheral,
         didUpdateValueForDescriptor: CBDescriptor,
-        error: NSError?
+        error: NSError?,
     ) {
         onEvent(OnGattDescriptorRead(peripheral, didUpdateValueForDescriptor.value as NSData))
     }

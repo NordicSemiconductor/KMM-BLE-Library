@@ -2,7 +2,7 @@ package scanner
 
 import platform.CoreBluetooth.CBPeripheral
 
-actual class KMMDevice(private val peripheral: CBPeripheral) {
+actual class KMMDevice(internal val peripheral: CBPeripheral) {
 
     actual val name: String
         get() = peripheral.name ?: "Unknown"

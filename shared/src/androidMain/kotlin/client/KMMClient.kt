@@ -3,18 +3,17 @@ package client
 import android.annotation.SuppressLint
 import android.content.Context
 import no.nordicsemi.android.kotlin.ble.client.main.callback.ClientBleGatt
-import no.nordicsemi.android.kotlin.ble.core.ServerDevice
+import scanner.KMMDevice
 
 @SuppressLint("MissingPermission")
 actual class KMMClient(
-    private val context: Context,
-    private val device: ServerDevice
+    private val context: Context
 ) {
 
     private var client: ClientBleGatt? = null
 
-    actual suspend fun connect() {
-        client = ClientBleGatt.connect(context, device)
+    actual suspend fun connect(device: KMMDevice) {
+        client = ClientBleGatt.connect(context, device.device)
     }
 
     actual suspend fun disconnect() {

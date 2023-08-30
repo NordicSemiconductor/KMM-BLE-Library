@@ -9,7 +9,7 @@ expect class KMMCharacteristic {
 
     suspend fun getNotifications(): Flow<ByteArray>
 
-    suspend fun write(value: ByteArray, writeType: KMMWriteType)
+    suspend fun write(value: ByteArray, writeType: KMMWriteType = KMMWriteType.DEFAULT)
 
     suspend fun read(): ByteArray
 }

@@ -1,8 +1,10 @@
 package client
 
+import scanner.KMMDevice
+
 expect class KMMClient {
 
-    suspend fun connect()
+    suspend fun connect(device: KMMDevice)
 
     suspend fun disconnect()
 
