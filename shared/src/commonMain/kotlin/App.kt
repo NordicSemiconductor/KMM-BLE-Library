@@ -11,7 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import view.ScannerView
+import scanner.ScannerView
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable

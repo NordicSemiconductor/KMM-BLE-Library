@@ -35,10 +35,12 @@ kotlin {
                 implementation("io.github.aakira:napier:2.6.1")
                 implementation(compose.runtime)
                 implementation(compose.foundation)
-                implementation(compose.material)
+                implementation(compose.material3)
+                implementation(compose.materialIconsExtended)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
                 implementation("com.benasher44:uuid:0.8.0")
+                implementation("cafe.adriel.voyager:voyager-navigator:1.0.0-rc06")
             }
         }
         val androidMain by getting {
