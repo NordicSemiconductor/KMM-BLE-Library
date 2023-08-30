@@ -6,9 +6,11 @@ actual fun getPlatformName(): String = "Android"
 
 @Composable
 fun MainView(scannerViewModel: ScannerViewModel) {
-    RequireBluetooth {
-        RequireInternet {
-            App(scannerViewModel)
+    App(scannerViewModel) {
+        RequireBluetooth {
+            RequireInternet {
+                Conent(scannerViewModel)
+            }
         }
     }
 }

@@ -13,31 +13,40 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import scanner.ScannerView
+import theme.NordicTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App(scannerViewModel: ScannerViewModel) {
-    MaterialTheme {
-        var greetingText by remember { mutableStateOf("Hello, World!") }
-        var showImage by remember { mutableStateOf(false) }
-
-        val text = scannerViewModel.value
-
+fun App(
+    scannerViewModel: ScannerViewModel,
+    content: @Composable () -> Unit = { Conent(scannerViewModel) }
+) {
+    NordicTheme {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            TopAppBar({ Text("nRF Blinky") })
+            NordicAppBar("nRF Blinky")
 
-            Button(onClick = {
-
-                greetingText = "Hello, ${getPlatformName()}, $text"
-                showImage = !showImage
-            }) {
-                Text(greetingText)
-            }
-
-            if (showImage) {
-                ScannerView()
-            }
+            content()
         }
+    }
+}
+
+@Composable
+fun Conent(scannerViewModel: ScannerViewModel) {
+
+    var greetingText by remember { mutableStateOf("Hello, World!") }
+    var showImage by remember { mutableStateOf(false) }
+
+    val text = scannerViewModel.value
+
+    Button(onClick = {
+        greetingText = "Hello, ${getPlatformName()}, $text"
+        showImage = !showImage
+    }) {
+        Text(greetingText)
+    }
+
+    if (showImage) {
+        ScannerView()
     }
 }
 
