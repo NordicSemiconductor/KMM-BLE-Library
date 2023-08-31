@@ -14,6 +14,7 @@ internal class KMMScannerAggregator(private val scanner: KMMScanner) {
         return scanner.scan()
             .onEach { result += it }
             .map { result }
+            .map { it.distinctBy { it.address } }
             .catch { Napier.d("Exception occurred", it) }
     }
 }

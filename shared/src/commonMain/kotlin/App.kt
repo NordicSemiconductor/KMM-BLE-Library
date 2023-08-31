@@ -12,6 +12,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import cafe.adriel.voyager.navigator.Navigator
+import scanner.ScannerScreen
 import scanner.ScannerView
 import theme.NordicTheme
 
@@ -46,7 +48,7 @@ fun Conent(scannerViewModel: ScannerViewModel) {
     }
 
     if (showImage) {
-        ScannerView()
+        Navigator(ScannerScreen())
     }
 }
 

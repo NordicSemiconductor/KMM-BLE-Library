@@ -37,9 +37,9 @@ object BlinkyButtonParser {
     private val STATE_ON = byteArrayOf(0x01)
 
     fun isButtonPressed(data: ByteArray): Boolean {
-        return when (data) {
-            STATE_ON -> true
-            STATE_OFF -> false
+        return when {
+            data.contentEquals(STATE_ON) -> true
+            data.contentEquals(STATE_OFF) -> false
             else -> false
         }
     }

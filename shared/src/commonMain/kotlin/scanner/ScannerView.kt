@@ -2,7 +2,10 @@ package scanner
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +30,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import blinky.BlinkyScreen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -41,7 +47,7 @@ fun ScannerView() {
     DisposableEffect(Unit) {
         Napier.i("Start launch effect", tag = "BBBTESBBB")
         val job = scanner.getDevices()
-            .onEach { devices.value = devices.value + it }
+            .onEach { devices.value = it }
             .launchIn(scope)
 
         onDispose {
@@ -55,7 +61,11 @@ fun ScannerView() {
 
 @Composable
 fun DevicesList(devices: List<KMMDevice>) {
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(16.dp)
+    ) {
         item { Text("Scanner working...") }
         items(devices.size) {
             DeviceView(devices[it])
@@ -65,9 +75,11 @@ fun DevicesList(devices: List<KMMDevice>) {
 
 @Composable
 fun DeviceView(device: KMMDevice) {
+    val navigator = LocalNavigator.currentOrThrow
     DeviceListItem(
         device.name,
-        device.address ?: "00:00:00:00:00"
+        device.address ?: "00:00:00:00:00",
+        modifier = Modifier.clickable { navigator.push(BlinkyScreen(device)) }
     )
 }
 
