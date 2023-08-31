@@ -7,7 +7,7 @@ actual class KMMDevice(internal val device: ServerDevice) {
     actual val name: String
         get() = device.name
 
-    actual val address: String?
+    actual val address: String
         get() = device.address
 
 }
