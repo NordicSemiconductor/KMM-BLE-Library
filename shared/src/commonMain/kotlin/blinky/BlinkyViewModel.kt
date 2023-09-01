@@ -5,7 +5,6 @@ import cafe.adriel.voyager.core.model.coroutineScope
 import client.KMMCharacteristic
 import client.KMMClient
 import com.benasher44.uuid.uuidFrom
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -32,26 +31,16 @@ class BlinkyViewModel(
 
     init {
         coroutineScope.launch {
-            Napier.i("aaa", tag = "AAATESTAAA")
             client.connect(device)
-
-            Napier.i("bbb", tag = "AAATESTAAA")
 
             val services = client.discoverServices()
 
-            Napier.i("ccc", tag = "AAATESTAAA")
-
             val service = services.findService(BLINKY_SERVICE_UUID)!!
-
-            Napier.i("ddd", tag = "AAATESTAAA")
 
             ledCharacteristic = service.findCharacteristic(BLINKY_LED_CHARACTERISTIC_UUID)!!
             val buttonCharacteristic = service.findCharacteristic(BLINKY_BUTTON_CHARACTERISTIC_UUID)!!
 
-            Napier.i("eee", tag = "AAATESTAAA")
-
             buttonCharacteristic.getNotifications()
-                .onEach { Napier.i("button notification", tag = "AAATESTAAA") }
                 .onEach { _state.value = _state.value.copy(isButtonPressed = BlinkyButtonParser.isButtonPressed(it))  }
                 .launchIn(coroutineScope)
         }

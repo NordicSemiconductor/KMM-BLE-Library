@@ -9,7 +9,7 @@ fun MainView() {
     App {
         RequireBluetooth {
             RequireInternet {
-                Conent()
+                Content()
             }
         }
     }
