@@ -33,7 +33,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 @Composable
 fun ScannerView(devices: List<KMMDevice>) {
     LazyColumn(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+        modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(16.dp)
     ) {
