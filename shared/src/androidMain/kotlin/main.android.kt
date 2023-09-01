@@ -5,11 +5,11 @@ import no.nordicsemi.android.common.permissions.internet.RequireInternet
 actual fun getPlatformName(): String = "Android"
 
 @Composable
-fun MainView(scannerViewModel: ScannerViewModel) {
-    App(scannerViewModel) {
+fun MainView() {
+    App {
         RequireBluetooth {
             RequireInternet {
-                Conent(scannerViewModel)
+                Conent()
             }
         }
     }

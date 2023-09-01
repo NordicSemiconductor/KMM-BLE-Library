@@ -1,42 +1,9 @@
 package scanner
 
-import kotlinx.coroutines.channels.awaitClose
+import client.IOSClientWrapper
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import platform.CoreBluetooth.CBCentralManager
-import platform.CoreBluetooth.CBCentralManagerDelegateProtocol
-import platform.CoreBluetooth.CBManagerStatePoweredOn
-import platform.CoreBluetooth.CBPeripheral
-import platform.Foundation.NSNumber
-import platform.darwin.NSObject
 
-actual class KMMScanner {
+actual class KMMScanner(private val client: IOSClientWrapper) {
 
-    actual fun scan(): Flow<KMMDevice> = callbackFlow {
-        val cbCentralManager =
-            CBCentralManager(object : NSObject(), CBCentralManagerDelegateProtocol {
-                override fun centralManagerDidUpdateState(central: CBCentralManager) {
-                    if (central.state == CBManagerStatePoweredOn) {
-                        // Turned on
-                        central.scanForPeripheralsWithServices(null, null)
-                    } else {
-//                    isBluetoothReady = false
-                    }
-                }
-
-                override fun centralManager(
-                    central: CBCentralManager,
-                    didDiscoverPeripheral: CBPeripheral,
-                    advertisementData: Map<Any?, *>,
-                    RSSI: NSNumber,
-                ) {
-                    val kmmDevice = KMMDevice(didDiscoverPeripheral)
-                    trySend(kmmDevice)
-                }
-            }, null)
-
-        awaitClose {
-            cbCentralManager.stopScan()
-        }
-    }
+    actual fun scan(): Flow<List<KMMDevice>> = client.value.scan()
 }

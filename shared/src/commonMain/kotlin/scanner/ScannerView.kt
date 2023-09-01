@@ -19,10 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -33,34 +29,9 @@ import androidx.compose.ui.unit.dp
 import blinky.BlinkyScreen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import io.github.aakira.napier.Napier
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import org.koin.compose.koinInject
 
 @Composable
-fun ScannerView() {
-    val scanner = koinInject<KMMScannerAggregator>()
-    val devices = remember { mutableStateOf(scanner.result.toList()) }
-
-    val scope = rememberCoroutineScope()
-    DisposableEffect(Unit) {
-        Napier.i("Start launch effect", tag = "BBBTESBBB")
-        val job = scanner.getDevices()
-            .onEach { devices.value = it }
-            .launchIn(scope)
-
-        onDispose {
-            Napier.i("Dispose", tag = "BBBTESBBB")
-            job.cancel()
-        }
-    }
-
-    DevicesList(devices.value)
-}
-
-@Composable
-fun DevicesList(devices: List<KMMDevice>) {
+fun ScannerView(devices: List<KMMDevice>) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),

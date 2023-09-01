@@ -37,7 +37,7 @@ actual class KMMDescriptor(
         return suspendCoroutine { continuation ->
             onDescriptorRead = {
                 onDescriptorRead = null
-                continuation.resume(it.data.toByteArray())
+                continuation.resume(it.data?.toByteArray() ?: byteArrayOf())
             }
             peripheral.readValueForDescriptor(native)
         }

@@ -43,6 +43,10 @@ actual class KMMCharacteristic(
         return callbackFlow {
             peripheral.setNotifyValue(true, native)
 
+            onCharacteristicRead = {
+                trySend(it.data?.toByteArray() ?: byteArrayOf())
+            }
+
             awaitClose {
                 peripheral.setNotifyValue(false, native)
             }
@@ -67,7 +71,7 @@ actual class KMMCharacteristic(
         return suspendCoroutine { continuation ->
             onCharacteristicRead = {
                 onCharacteristicRead = null
-                continuation.resume(it.data.toByteArray())
+                continuation.resume(it.data?.toByteArray() ?: byteArrayOf())
             }
             peripheral.readValueForCharacteristic(native)
         }

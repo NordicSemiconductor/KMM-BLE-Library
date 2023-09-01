@@ -2,8 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+	</array>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Permission is used to connect and exchange data between phone and BLE device.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>This app need Bluetooth to communicate wit IoT devices.</string>
+	<string>Bluetooth is required to scan and connect to BLE device.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

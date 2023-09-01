@@ -20,8 +20,7 @@ import theme.NordicTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(
-    scannerViewModel: ScannerViewModel,
-    content: @Composable () -> Unit = { Conent(scannerViewModel) }
+    content: @Composable () -> Unit = { Conent() }
 ) {
     NordicTheme {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -33,15 +32,13 @@ fun App(
 }
 
 @Composable
-fun Conent(scannerViewModel: ScannerViewModel) {
+fun Conent() {
 
     var greetingText by remember { mutableStateOf("Hello, World!") }
     var showImage by remember { mutableStateOf(false) }
 
-    val text = scannerViewModel.value
-
     Button(onClick = {
-        greetingText = "Hello, ${getPlatformName()}, $text"
+        greetingText = "Hello, ${getPlatformName()}"
         showImage = !showImage
     }) {
         Text(greetingText)

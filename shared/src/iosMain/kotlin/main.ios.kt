@@ -5,5 +5,5 @@ import scanner.KMMScanner
 
 actual fun getPlatformName(): String = "iOS"
 
-fun MainViewController() = ComposeUIViewController { App(ScannerViewModel(KMMScanner())) }
+fun MainViewController() = ComposeUIViewController { App() }
     .also { Napier.base(DebugAntilog()) }
