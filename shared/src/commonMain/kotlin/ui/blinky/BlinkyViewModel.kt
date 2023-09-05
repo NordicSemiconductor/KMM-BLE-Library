@@ -1,4 +1,4 @@
-package blinky
+package ui.blinky
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
@@ -41,7 +41,10 @@ class BlinkyViewModel(
             val buttonCharacteristic = service.findCharacteristic(BLINKY_BUTTON_CHARACTERISTIC_UUID)!!
 
             buttonCharacteristic.getNotifications()
-                .onEach { _state.value = _state.value.copy(isButtonPressed = BlinkyButtonParser.isButtonPressed(it))  }
+                .onEach { _state.value = _state.value.copy(isButtonPressed = BlinkyButtonParser.isButtonPressed(
+                    it
+                )
+                )  }
                 .launchIn(coroutineScope)
         }
     }

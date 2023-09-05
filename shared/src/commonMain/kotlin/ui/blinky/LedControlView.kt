@@ -1,4 +1,4 @@
-package blinky
+package ui.blinky
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

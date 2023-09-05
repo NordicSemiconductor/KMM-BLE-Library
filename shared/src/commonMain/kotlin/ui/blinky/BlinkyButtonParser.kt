@@ -29,7 +29,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package blinky
+package ui.blinky
 
 object BlinkyButtonParser {
 

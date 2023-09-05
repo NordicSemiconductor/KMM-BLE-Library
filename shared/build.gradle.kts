@@ -27,6 +27,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
                 implementation("com.juul.kable:core:0.25.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
                 implementation("io.insert-koin:koin-core:3.4.3")
@@ -49,6 +50,8 @@ kotlin {
                 api("androidx.core:core-ktx:1.9.0")
                 implementation(libs.nordic.blek.scanner)
                 implementation(libs.nordic.blek.client)
+                implementation(libs.nordic.blek.advertiser)
+                implementation(libs.nordic.blek.server)
                 implementation(libs.nordic.permissions.ble)
                 implementation(libs.nordic.permissions.internet)
                 implementation("com.benasher44:uuid:0.8.0")

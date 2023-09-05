@@ -1,4 +1,4 @@
-package scanner
+package ui.scanner
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,9 +26,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import blinky.BlinkyScreen
+import ui.blinky.BlinkyScreen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import scanner.KMMDevice
 
 @Composable
 fun ScannerView(devices: List<KMMDevice>) {
@@ -92,32 +93,4 @@ fun DeviceListItem(
 
         extras()
     }
-}
-
-@Composable
-fun CircularIcon(
-    painter: ImageVector,
-    modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colorScheme.secondary,
-    enabled: Boolean = true,
-) {
-    Image(
-        imageVector = painter,
-        contentDescription = null,
-        colorFilter = if (enabled) {
-            ColorFilter.tint(MaterialTheme.colorScheme.contentColorFor(backgroundColor))
-        } else {
-            ColorFilter.tint(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f))
-        },
-        modifier = modifier
-            .background(
-                color = if (enabled) {
-                    backgroundColor
-                } else {
-                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-                },
-                shape = CircleShape
-            )
-            .padding(8.dp)
-    )
 }

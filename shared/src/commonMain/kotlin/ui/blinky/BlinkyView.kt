@@ -1,4 +1,4 @@
-package blinky
+package ui.blinky
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-internal fun BlinkyControlView(
+fun BlinkyView(
     ledState: Boolean,
     buttonState: Boolean,
     onStateChanged: (Boolean) -> Unit,

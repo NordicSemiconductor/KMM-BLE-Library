@@ -1,4 +1,4 @@
-package blinky
+package ui.blinky
 
 data class BlinkyViewState(
     val isButtonPressed: Boolean = false,

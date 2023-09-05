@@ -1,17 +1,18 @@
-package scanner
+package ui.server
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 
-class ScannerScreen : Screen {
+class ServerScreen : Screen {
 
     @Composable
     override fun Content() {
-        val viewModel = rememberScreenModel { ScannerViewModel() }
+        val viewModel = rememberScreenModel { ServerViewModel() }
         val state = viewModel.state.collectAsState()
 
-        ScannerView(state.value)
+        ServerView(state.value, viewModel)
     }
 }
+

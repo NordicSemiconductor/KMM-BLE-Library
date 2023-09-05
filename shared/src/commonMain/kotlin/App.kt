@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
-import scanner.ScannerScreen
+import ui.scanner.ScannerScreen
 import theme.NordicTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,7 +23,7 @@ fun App(
 }
 
 @Composable
-private fun Content() {
+fun Content() {
     Navigator(ScannerScreen())
 }
 
