@@ -2,6 +2,7 @@ package advertisement
 
 import com.benasher44.uuid.Uuid
 
-data class KMMBleServerDescriptor (
+data class KMMAdvertisementSettings(
+    val name: String,
     val uuid: Uuid
 )

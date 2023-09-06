@@ -32,4 +32,8 @@ class IOSServer : NSObject(), CBPeripheralManagerDelegateProtocol {
         )
         manager.startAdvertising(map)
     }
+
+    suspend fun stop() {
+        manager.stopAdvertising()
+    }
 }

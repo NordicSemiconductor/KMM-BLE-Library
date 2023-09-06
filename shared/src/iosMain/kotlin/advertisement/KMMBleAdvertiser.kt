@@ -1,17 +1,17 @@
 package advertisement
 
-import platform.CoreBluetooth.CBPeripheralManager
-import platform.CoreBluetooth.CBPeripheralManagerDelegateProtocol
-import platform.darwin.NSObject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-actual class KMMBleAdvertiser {
+actual class KMMBleAdvertiser : KoinComponent {
+
+    private val server: IOSServer by inject()
 
     actual suspend  fun advertise(settings: KMMAdvertisementSettings) {
-        val manager = CBPeripheralManager(object : NSObject(), CBPeripheralManagerDelegateProtocol {
-            override fun peripheralManagerDidUpdateState(peripheral: CBPeripheralManager) {
+        server.advertise(settings)
+    }
 
-            }
-
-        }, null)
+    actual suspend fun stop() {
+        server.stop()
     }
 }
