@@ -1,8 +1,8 @@
 package scanner
 
-import no.nordicsemi.android.kotlin.ble.core.ServerDevice
+import no.nordicsemi.android.kotlin.ble.core.BleDevice
 
-actual class KMMDevice(internal val device: ServerDevice) {
+actual class KMMDevice(internal val device: BleDevice) {
 
     actual val name: String
         get() = device.name

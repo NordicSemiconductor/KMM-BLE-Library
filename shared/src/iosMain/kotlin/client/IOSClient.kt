@@ -25,6 +25,7 @@ import platform.Foundation.NSError
 import platform.Foundation.NSNumber
 import platform.darwin.NSObject
 import scanner.KMMDevice
+import scanner.PeripheralDevice
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -69,7 +70,7 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
     }
 
     suspend fun connect(device: KMMDevice) {
-        peripheral = device.peripheral
+        peripheral = (device.device as PeripheralDevice).peripheral
         peripheral.delegate = this
         Napier.i("Connect", tag = TAG)
         bleState.first { it == CBCentralManagerStatePoweredOn }
@@ -236,7 +237,7 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
         advertisementData: Map<Any?, *>,
         RSSI: NSNumber,
     ) {
-        val kmmDevice = KMMDevice(didDiscoverPeripheral)
+        val kmmDevice = KMMDevice(PeripheralDevice(didDiscoverPeripheral))
         _scannedDevices.value = _scannedDevices.value + kmmDevice
     }
 

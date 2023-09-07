@@ -4,21 +4,28 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import no.nordicsemi.android.kotlin.ble.core.data.BleGattPermission
-import no.nordicsemi.android.kotlin.ble.core.data.BleGattProperty
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import no.nordicsemi.android.kotlin.ble.server.main.ServerBleGatt
 import no.nordicsemi.android.kotlin.ble.server.main.service.ServerBleGattCharacteristicConfig
 import no.nordicsemi.android.kotlin.ble.server.main.service.ServerBleGattDescriptorConfig
 import no.nordicsemi.android.kotlin.ble.server.main.service.ServerBleGattServiceConfig
 import no.nordicsemi.android.kotlin.ble.server.main.service.ServerBleGattServiceType
+import no.nordicsemi.android.kotlin.ble.server.main.service.ServerBluetoothGattConnection
+import scanner.KMMDevice
 
 @SuppressLint("MissingPermission")
 actual class KMMBleServer(private val context: Context) {
 
     private var server: ServerBleGatt? = null
 
+    actual val connections: Flow<Map<KMMDevice, KMMBleServerProfile>>
+        get() = server!!.connections.map {
+            it.mapKeys { KMMDevice(it.key) }.mapValues { it.value.toDomain() }
+        }
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    actual suspend fun startServer(services: List<KMMBleServerService>) {
+    actual suspend fun startServer(services: List<KMMBleServerServiceConfig>) {
 
         val config = services.map {
             val characteristics = it.characteristics.map {
@@ -26,14 +33,14 @@ actual class KMMBleServer(private val context: Context) {
                     it.uuid
                     ServerBleGattDescriptorConfig(
                         it.uuid,
-                        it.permissions.toDomain()
+                        it.permissions.toNative()
                     )
                 }
 
                 ServerBleGattCharacteristicConfig(
                     it.uuid,
-                    it.properties.toDomain(),
-                    it.permissions.toDomain(),
+                    it.properties.toNative(),
+                    it.permissions.toNative(),
                     descritptors
                 )
             }
@@ -52,23 +59,13 @@ actual class KMMBleServer(private val context: Context) {
         server?.stopServer()
     }
 
-    private fun List<KMMBlePermission>.toDomain(): List<BleGattPermission> {
-        return this.map {
-            when (it) {
-                KMMBlePermission.READ -> BleGattPermission.PERMISSION_READ
-                KMMBlePermission.WRITE -> BleGattPermission.PERMISSION_WRITE
+    private fun ServerBluetoothGattConnection.toDomain(): KMMBleServerProfile {
+        val services = services.services.map {
+            val characteristics = it.characteristics.map {
+                KMMBleServerCharacteristic(it)
             }
+            KMMBleServerService(it.uuid, characteristics)
         }
-    }
-
-    private fun List<KMMCharacteristicProperty>.toDomain(): List<BleGattProperty> {
-        return this.map {
-            when (it) {
-                KMMCharacteristicProperty.READ -> BleGattProperty.PROPERTY_READ
-                KMMCharacteristicProperty.WRITE -> BleGattProperty.PROPERTY_WRITE
-                KMMCharacteristicProperty.NOTIFY -> BleGattProperty.PROPERTY_NOTIFY
-                KMMCharacteristicProperty.INDICATE -> BleGattProperty.PROPERTY_INDICATE
-            }
-        }
+        return KMMBleServerProfile(services)
     }
 }
