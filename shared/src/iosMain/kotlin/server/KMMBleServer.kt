@@ -7,13 +7,13 @@ import scanner.KMMDevice
 actual class KMMBleServer(private val server: IOSServer) {
 
     actual val connections: Flow<Map<KMMDevice, KMMBleServerProfile>>
-        get() = TODO("Not yet implemented")
+        get() = server.connections
 
     actual suspend fun startServer(services: List<KMMBleServerServiceConfig>) {
         server.startServer(services)
     }
 
     actual suspend fun stopServer() {
-        server.stop()
+        server.stopAdvertising()
     }
 }

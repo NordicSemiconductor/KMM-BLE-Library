@@ -1,16 +1,21 @@
 package server
 
+import client.toByteArray
 import client.toNSData
 import client.toUuid
 import com.benasher44.uuid.Uuid
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import platform.CoreBluetooth.CBCharacteristic
+import platform.CoreBluetooth.CBATTErrorSuccess
+import platform.CoreBluetooth.CBATTRequest
 import platform.CoreBluetooth.CBDescriptor
-import platform.Foundation.setValue
+import platform.CoreBluetooth.CBMutableCharacteristic
+import platform.CoreBluetooth.CBPeripheralManager
 
 actual class KMMBleServerCharacteristic(
-    val native: CBCharacteristic
+    private val native: CBMutableCharacteristic,
+    private val manager: CBPeripheralManager,
+    private val notificationsRecords: NotificationsRecords,
 ) {
     actual val uuid: Uuid = native.UUID.toUuid()
 
@@ -26,9 +31,39 @@ actual class KMMBleServerCharacteristic(
     private val _value = MutableStateFlow(byteArrayOf())
     actual val value: Flow<ByteArray> = _value
 
-    actual suspend fun setValue(value: ByteArray) {
-        native.setValue(value.toNSData(), forKeyPath = "")
+    fun onEvent(event: ServerRequest) {
+        when (event) {
+            is ReadRequest -> handleReadRequest(event.request)
+            is WriteRequest -> handleWriteRequest(event.request)
+        }
+    }
+
+    private fun handleReadRequest(request: CBATTRequest) {
+        val dataToSend = _value.value.copyOfRange(
+            _value.value.size - request.offset.toInt(),
+            _value.value.size
+        )
+
+        request.value = dataToSend.toNSData()
+        manager.respondToRequest(request, CBATTErrorSuccess)
+    }
+
+    private fun handleWriteRequest(requests: List<CBATTRequest>) {
+        requests.forEach {
+            it.value?.toByteArray()?.let {
+                setValue(it)
+            }
+            manager.respondToRequest(it, CBATTErrorSuccess)
+        }
+    }
+
+    actual fun setValue(value: ByteArray) {
+        _value.value = value
+        val centralsToUpdate = notificationsRecords.getCentrals(native.UUID.toUuid())
+
+        val newValue = value.toNSData()
+        native.setValue(newValue)
+
+        manager.updateValue(newValue, native, centralsToUpdate)
     }
 }
-
-

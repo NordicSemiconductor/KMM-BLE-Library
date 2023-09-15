@@ -12,6 +12,6 @@ actual class KMMBleAdvertiser : KoinComponent {
     }
 
     actual suspend fun stop() {
-        server.stop()
+        server.stopAdvertising()
     }
 }

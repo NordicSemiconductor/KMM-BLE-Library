@@ -3,7 +3,7 @@ package server
 import no.nordicsemi.android.kotlin.ble.core.data.BleGattPermission
 import no.nordicsemi.android.kotlin.ble.core.data.BleGattProperty
 
-internal fun List<BleGattPermission>.toDomain(): List<KMMBlePermission> {
+internal fun List<BleGattPermission>.toDomainPermissions(): List<KMMBlePermission> {
     return this.mapNotNull {
         when (it) {
             BleGattPermission.PERMISSION_READ -> KMMBlePermission.READ
@@ -18,7 +18,7 @@ internal fun List<BleGattPermission>.toDomain(): List<KMMBlePermission> {
     }
 }
 
-internal fun List<BleGattProperty>.toDomain(): List<KMMCharacteristicProperty> {
+internal fun List<BleGattProperty>.toDomainProperties(): List<KMMCharacteristicProperty> {
     return this.mapNotNull {
         when (it) {
             BleGattProperty.PROPERTY_READ -> KMMCharacteristicProperty.READ
@@ -33,7 +33,7 @@ internal fun List<BleGattProperty>.toDomain(): List<KMMCharacteristicProperty> {
     }
 }
 
-internal fun List<KMMBlePermission>.toNative(): List<BleGattPermission> {
+internal fun List<KMMBlePermission>.toNativePermissions(): List<BleGattPermission> {
     return this.map {
         when (it) {
             KMMBlePermission.READ -> BleGattPermission.PERMISSION_READ
@@ -42,7 +42,7 @@ internal fun List<KMMBlePermission>.toNative(): List<BleGattPermission> {
     }
 }
 
-internal fun List<KMMCharacteristicProperty>.toNative(): List<BleGattProperty> {
+internal fun List<KMMCharacteristicProperty>.toNativeProperties(): List<BleGattProperty> {
     return this.map {
         when (it) {
             KMMCharacteristicProperty.READ -> BleGattProperty.PROPERTY_READ

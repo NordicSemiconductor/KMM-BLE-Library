@@ -33,14 +33,14 @@ actual class KMMBleServer(private val context: Context) {
                     it.uuid
                     ServerBleGattDescriptorConfig(
                         it.uuid,
-                        it.permissions.toNative()
+                        it.permissions.toNativePermissions()
                     )
                 }
 
                 ServerBleGattCharacteristicConfig(
                     it.uuid,
-                    it.properties.toNative(),
-                    it.permissions.toNative(),
+                    it.properties.toNativeProperties(),
+                    it.permissions.toNativePermissions(),
                     descritptors
                 )
             }
@@ -60,12 +60,6 @@ actual class KMMBleServer(private val context: Context) {
     }
 
     private fun ServerBluetoothGattConnection.toDomain(): KMMBleServerProfile {
-        val services = services.services.map {
-            val characteristics = it.characteristics.map {
-                KMMBleServerCharacteristic(it)
-            }
-            KMMBleServerService(it.uuid, characteristics)
-        }
         return KMMBleServerProfile(services)
     }
 }

@@ -9,5 +9,5 @@ expect class KMMBleServerCharacteristic {
     val permissions: List<KMMBlePermission>
     val descriptors: List<KMMBleServerDescriptor>
     val value: Flow<ByteArray>
-    suspend fun setValue(value: ByteArray)
+    fun setValue(value: ByteArray)
 }

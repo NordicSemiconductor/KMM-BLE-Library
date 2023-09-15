@@ -12,9 +12,9 @@ actual class KMMBleServerCharacteristic(
 
     actual val uuid: Uuid = native.uuid
 
-    actual val properties: List<KMMCharacteristicProperty> = native.properties.toDomain()
+    actual val properties: List<KMMCharacteristicProperty> = native.properties.toDomainProperties()
 
-    actual val permissions: List<KMMBlePermission> = native.permissions.toDomain()
+    actual val permissions: List<KMMBlePermission> = native.permissions.toDomainPermissions()
 
     actual val descriptors: List<KMMBleServerDescriptor> = native.descriptors.map {
         KMMBleServerDescriptor(it)
@@ -22,7 +22,7 @@ actual class KMMBleServerCharacteristic(
 
     actual val value: Flow<ByteArray> = native.value.map { it.value }
 
-    actual suspend fun setValue(value: ByteArray) {
+    actual fun setValue(value: ByteArray) {
         native.setValue(DataByteArray(value))
     }
 }

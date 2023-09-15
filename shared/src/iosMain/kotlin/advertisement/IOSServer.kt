@@ -1,19 +1,13 @@
 package advertisement
 
-import client.KMMCharacteristic
 import client.toCBUUID
 import client.toUuid
-import com.benasher44.uuid.Uuid
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
-import platform.CoreBluetooth.CBATTErrorSuccess
 import platform.CoreBluetooth.CBATTRequest
 import platform.CoreBluetooth.CBAdvertisementDataLocalNameKey
 import platform.CoreBluetooth.CBAdvertisementDataServiceUUIDsKey
@@ -42,12 +36,16 @@ import scanner.CentralDevice
 import scanner.KMMDevice
 import server.KMMBlePermission
 import server.KMMBleServerProfile
-import server.KMMBleServerService
 import server.KMMBleServerServiceConfig
 import server.KMMCharacteristicProperty
+import server.NotificationsRecords
+import server.ReadRequest
+import server.WriteRequest
 
 @Suppress("CONFLICTING_OVERLOADS")
-class IOSServer : NSObject(), CBPeripheralManagerDelegateProtocol {
+class IOSServer(
+    private val notificationsRecords: NotificationsRecords,
+) : NSObject(), CBPeripheralManagerDelegateProtocol {
     private val manager = CBPeripheralManager(this, null)
 
     private val _bleState = MutableStateFlow(CBPeripheralManagerStateUnknown)
@@ -58,18 +56,26 @@ class IOSServer : NSObject(), CBPeripheralManagerDelegateProtocol {
         it.mapKeys { KMMDevice(CentralDevice(it.key)) }
     }
 
-    private val profile: KMMBleServerProfile = KMMBleServerProfile(emptyList())
+    private var services = listOf<CBService>()
+
+    private val profile: KMMBleServerProfile = KMMBleServerProfile(emptyList(), manager, notificationsRecords)
 
     override fun peripheralManagerDidUpdateState(peripheral: CBPeripheralManager) {
         _bleState.value = peripheral.state
+    }
+
+    override fun peripheralManagerIsReadyToUpdateSubscribers(peripheral: CBPeripheralManager) {
+
     }
 
     override fun peripheralManager(
         peripheral: CBPeripheralManager,
         didReceiveReadRequest: CBATTRequest
     ) {
-        didReceiveReadRequest.value
-        manager.respondToRequest(didReceiveReadRequest, CBATTErrorSuccess)
+        val central = didReceiveReadRequest.central
+        val profile = getProfile(central)
+
+        profile.onEvent(ReadRequest(didReceiveReadRequest))
     }
 
     override fun peripheralManager(
@@ -77,6 +83,9 @@ class IOSServer : NSObject(), CBPeripheralManagerDelegateProtocol {
         didReceiveWriteRequests: List<*>
     ) {
         val requests = didReceiveWriteRequests.map { it as CBATTRequest }
+        val central = requests.first().central
+
+        profile.onEvent(WriteRequest(requests))
     }
 
     override fun peripheralManager(
@@ -84,7 +93,7 @@ class IOSServer : NSObject(), CBPeripheralManagerDelegateProtocol {
         central: CBCentral,
         didSubscribeToCharacteristic: CBCharacteristic
     ) {
-
+        notificationsRecords.addCentral(didSubscribeToCharacteristic.UUID.toUuid(), central)
     }
 
     override fun peripheralManager(
@@ -92,7 +101,7 @@ class IOSServer : NSObject(), CBPeripheralManagerDelegateProtocol {
         central: CBCentral,
         didUnsubscribeFromCharacteristic: CBCharacteristic
     ) {
-
+        notificationsRecords.removeCentral(didUnsubscribeFromCharacteristic.UUID.toUuid(), central)
     }
 
     override fun peripheralManager(
@@ -100,15 +109,7 @@ class IOSServer : NSObject(), CBPeripheralManagerDelegateProtocol {
         didAddService: CBService,
         error: NSError?
     ) {
-        val characteristics = didAddService.characteristics
-            ?.map { it as CBCharacteristic } ?: emptyList()
-
-        val kmmCharacteristics = characteristics.map { KMMCharacteristic }
-        profile.copyWithNewService(KMMBleServerService(didAddService.UUID.toUuid()))
-    }
-
-    private fun KMMBleServerService(uuid: Uuid): KMMBleServerService {
-
+        services = services + didAddService
     }
 
     suspend fun advertise(settings: KMMAdvertisementSettings) {
@@ -146,15 +147,15 @@ class IOSServer : NSObject(), CBPeripheralManagerDelegateProtocol {
         }
     }
 
-    suspend fun stop() {
+    suspend fun stopAdvertising() {
         manager.stopAdvertising()
     }
 
     private fun getProfile(central: CBCentral): KMMBleServerProfile {
-        _connections.value.getOrElse(central) {
-            KMMDevice(CentralDevice(central)).also {
-                _connections.value = _connections.value + (central to profile.copy())
-            }
+        return _connections.value.getOrElse(central) {
+            val profile = profile.copy()
+            _connections.value = _connections.value + (central to profile.copy())
+            profile
         }
     }
 
