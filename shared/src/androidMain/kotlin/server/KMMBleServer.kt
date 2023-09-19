@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
 import no.nordicsemi.android.kotlin.ble.server.main.ServerBleGatt
 import no.nordicsemi.android.kotlin.ble.server.main.service.ServerBleGattCharacteristicConfig
@@ -20,9 +21,9 @@ actual class KMMBleServer(private val context: Context) {
     private var server: ServerBleGatt? = null
 
     actual val connections: Flow<Map<KMMDevice, KMMBleServerProfile>>
-        get() = server!!.connections.map {
+        get() = server?.connections?.map {
             it.mapKeys { KMMDevice(it.key) }.mapValues { it.value.toDomain() }
-        }
+        } ?: emptyFlow()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     actual suspend fun startServer(services: List<KMMBleServerServiceConfig>) {

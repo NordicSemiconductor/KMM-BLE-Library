@@ -33,9 +33,9 @@ fun AdvertiseView(state: ServerState, viewModel: ServerViewModel) {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 val icon = if (state.isAdvertising) {
-                    painterResource("ic_advertisements")
+                    painterResource("ic_advertisements.xml")
                 } else {
-                    painterResource("ic_advertisements_off")
+                    painterResource("ic_advertisements_off.xml")
                 }
 
                 val color = if (state.isAdvertising) {

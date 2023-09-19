@@ -5,8 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
-import ui.scanner.ScannerScreen
 import theme.NordicTheme
+import ui.main.MainScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,7 +24,7 @@ fun App(
 
 @Composable
 fun Content() {
-    Navigator(ScannerScreen())
+    Navigator(MainScreen())
 }
 
 expect fun getPlatformName(): String
