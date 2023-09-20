@@ -2,13 +2,13 @@ package advertisement
 
 import org.koin.core.component.KoinComponent
 
-actual class KMMBleAdvertiser(private val server: IOSServer) : KoinComponent {
+actual class KMMBleAdvertiser(private val server: IOSServerWrapper) : KoinComponent {
 
     actual suspend  fun advertise(settings: KMMAdvertisementSettings) {
-        server.advertise(settings)
+        server.value.advertise(settings)
     }
 
     actual suspend fun stop() {
-        server.stopAdvertising()
+        server.value.stopAdvertising()
     }
 }

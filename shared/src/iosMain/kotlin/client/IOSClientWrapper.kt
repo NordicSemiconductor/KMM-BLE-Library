@@ -1,4 +1,3 @@
 package client
 
-class IOSClientWrapper(val value: IOSClient) {
-}
+class IOSClientWrapper(val value: IOSClient)

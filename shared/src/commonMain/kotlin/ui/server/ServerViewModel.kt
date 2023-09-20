@@ -89,12 +89,14 @@ class ServerViewModel : ScreenModel, KoinComponent {
                 name = "Super Server",
                 uuid = BLINKY_SERVICE_UUID
             ))
+            _state.value = _state.value.copy(isAdvertising = true)
         }
     }
 
     fun stopAdvertise() {
         coroutineScope.launch {
             advertiser.stop()
+            _state.value = _state.value.copy(isAdvertising = false)
         }
     }
 
