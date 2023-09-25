@@ -17,7 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
-import consts.StringConst
+import dev.icerock.moko.resources.compose.stringResource
+import no.nordicsemi.kmm.ble.MR
 
 @Composable
 internal fun LedControlView(
@@ -45,7 +46,7 @@ internal fun LedControlView(
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
                 )
                 Text(
-                    text = StringConst.LED,
+                    text = stringResource(MR.strings.led),
                     style = MaterialTheme.typography.headlineMedium,
                 )
             }
@@ -55,7 +56,7 @@ internal fun LedControlView(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = StringConst.LED_DESCRIPTION,
+                    text = stringResource(MR.strings.led_description),
                     modifier = Modifier.weight(1f)
                 )
                 Switch(checked = state, onCheckedChange = onStateChanged)

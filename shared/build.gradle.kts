@@ -3,12 +3,24 @@ plugins {
     kotlin("native.cocoapods")
     id("com.android.library")
     id("org.jetbrains.compose")
+    id("dev.icerock.mobile.multiplatform-resources")
+}
+
+multiplatformResources {
+    multiplatformResourcesPackage = "no.nordicsemi.kmm.ble"
 }
 
 kotlin {
     androidTarget()
 
-    iosX64()
+    iosX64().also {
+        it.binaries {
+            framework {
+                export("dev.icerock.moko:resources:0.23.0")
+                export("dev.icerock.moko:graphics:0.9.0") // toUIColor here
+            }
+        }
+    }
     iosArm64()
     iosSimulatorArm64()
 
@@ -41,9 +53,12 @@ kotlin {
                 implementation(compose.components.resources)
                 implementation("com.benasher44:uuid:0.8.0")
                 implementation("cafe.adriel.voyager:voyager-navigator:1.0.0-rc06")
+                implementation("dev.icerock.moko:resources:0.23.0")
+                implementation("dev.icerock.moko:resources-compose:0.23.0") // for compose multiplatform
             }
         }
         val androidMain by getting {
+            dependsOn(commonMain)
             dependencies {
                 api("androidx.activity:activity-compose:1.6.1")
                 api("androidx.appcompat:appcompat:1.6.1")
@@ -71,7 +86,7 @@ kotlin {
 
 android {
     compileSdk = (findProperty("android.compileSdk") as String).toInt()
-    namespace = "com.myapplication.common"
+    namespace = "no.nordicsemi.kmm.ble"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")

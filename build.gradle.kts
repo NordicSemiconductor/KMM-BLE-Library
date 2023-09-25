@@ -10,4 +10,11 @@ plugins {
     alias(libs.plugins.nordic.application).apply(false)
     alias(libs.plugins.nordic.hilt).apply(false)
     alias(libs.plugins.hilt).apply(false)
+
+}
+
+buildscript {
+    dependencies {
+        classpath("dev.icerock.moko:resources-generator:0.23.0")
+    }
 }
