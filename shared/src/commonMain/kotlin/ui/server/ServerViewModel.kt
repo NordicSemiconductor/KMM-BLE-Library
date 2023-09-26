@@ -32,13 +32,12 @@ class ServerViewModel : ScreenModel, KoinComponent {
     private val _state = MutableStateFlow(ServerState())
     val state = _state.asStateFlow()
 
-    private var ledCharacteristic: KMMBleServerCharacteristic? = null
     private var buttonCharacteristic: KMMBleServerCharacteristic? = null
 
     init {
         //Define led characteristic
         val ledCharacteristic = KMMBleServerCharacteristicConfig(
-            BLINKY_SERVICE_UUID,
+            BLINKY_LED_CHARACTERISTIC_UUID,
             listOf(KMMCharacteristicProperty.READ, KMMCharacteristicProperty.WRITE),
             listOf(KMMBlePermission.READ, KMMBlePermission.WRITE),
             emptyList()
@@ -54,15 +53,13 @@ class ServerViewModel : ScreenModel, KoinComponent {
 
         //Put led and button characteristics inside a service
         val serviceConfig = KMMBleServerServiceConfig(
-            BLINKY_LED_CHARACTERISTIC_UUID,
+            BLINKY_SERVICE_UUID,
             listOf(ledCharacteristic, buttonCharacteristic)
         )
 
         coroutineScope.launch {
             server.startServer(listOf(serviceConfig))
-        }
 
-        coroutineScope.launch {
             server.connections
                 .onEach { it.values.forEach { setUpProfile(it) } }
                 .launchIn(coroutineScope)
@@ -73,6 +70,8 @@ class ServerViewModel : ScreenModel, KoinComponent {
         val service = profile.findService(BLINKY_SERVICE_UUID)!!
         val ledCharacteristic = service.findCharacteristic(BLINKY_LED_CHARACTERISTIC_UUID)!!
         val buttonCharacteristic = service.findCharacteristic(BLINKY_BUTTON_CHARACTERISTIC_UUID)!!
+
+        this.buttonCharacteristic = buttonCharacteristic
 
         ledCharacteristic.value.onEach {
             _state.value = _state.value.copy(isLedOn = !it.contentEquals(byteArrayOf(0x00)))
