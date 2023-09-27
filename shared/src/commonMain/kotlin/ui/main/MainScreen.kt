@@ -7,8 +7,6 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import dev.icerock.moko.resources.compose.stringResource
-import no.nordicsemi.kmm.ble.MR
 import ui.scanner.ScannerScreen
 import ui.server.ServerScreen
 
@@ -20,12 +18,12 @@ class MainScreen : Screen {
 
         Column {
             Button(onClick = { navigator.push(ScannerScreen()) }) {
-                Text(stringResource(MR.strings.client))
+                Text("Client")
             }
 
 
             Button(onClick = { navigator.push(ServerScreen()) }) {
-                Text(stringResource(MR.strings.server))
+                Text("Server")
             }
         }
     }

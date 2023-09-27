@@ -15,8 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.stringResource
-import no.nordicsemi.kmm.ble.MR
+import consts.StringConst
 
 @Composable
 internal fun ButtonControlView(
@@ -42,7 +41,7 @@ internal fun ButtonControlView(
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
                 )
                 Text(
-                    text = stringResource(MR.strings.blinky_button),
+                    text = StringConst.BLINKY_BUTTON,
                     style = MaterialTheme.typography.headlineMedium,
                 )
             }
@@ -53,11 +52,11 @@ internal fun ButtonControlView(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = stringResource(MR.strings.blinky_button_description),
+                    text = StringConst.BLINKY_BUTTON_DESCRIPTION,
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    text = if (state) stringResource(MR.strings.on) else stringResource(MR.strings.off),
+                    text = if (state) StringConst.ON else StringConst.OFF,
                 )
             }
         }
