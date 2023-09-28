@@ -64,6 +64,13 @@ class IOSServer(
         _bleState.value = peripheral.state
     }
 
+    override fun peripheralManagerDidStartAdvertising(
+        peripheral: CBPeripheralManager,
+        error: NSError?
+    ) {
+
+    }
+
     override fun peripheralManagerIsReadyToUpdateSubscribers(peripheral: CBPeripheralManager) {
 
     }
@@ -116,12 +123,13 @@ class IOSServer(
         bleState.first { it == CBCentralManagerStatePoweredOn }
         val map: Map<Any?, Any> = mapOf(
             CBAdvertisementDataLocalNameKey to settings.name,
-            CBAdvertisementDataServiceUUIDsKey to arrayOf(settings.uuid.toCBUUID())
+            CBAdvertisementDataServiceUUIDsKey to listOf(settings.uuid.toCBUUID()) //https://kotlinlang.org/docs/native-objc-interop.html#mappings
         )
         manager.startAdvertising(map)
     }
 
-    fun startServer(services: List<KMMBleServerServiceConfig>) {
+    suspend fun startServer(services: List<KMMBleServerServiceConfig>) {
+        bleState.first { it == CBCentralManagerStatePoweredOn }
         val iosServices = services.map {
             val characteristics = it.characteristics.map {
                 val descriptors = it.descriptors.map {
