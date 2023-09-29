@@ -4,6 +4,7 @@ import client.toByteArray
 import client.toNSData
 import client.toUuid
 import com.benasher44.uuid.Uuid
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import platform.CoreBluetooth.CBATTErrorSuccess
@@ -11,6 +12,8 @@ import platform.CoreBluetooth.CBATTRequest
 import platform.CoreBluetooth.CBDescriptor
 import platform.CoreBluetooth.CBMutableCharacteristic
 import platform.CoreBluetooth.CBPeripheralManager
+
+private const val TAG = "BLE-TAG"
 
 actual class KMMBleServerCharacteristic(
     private val native: CBMutableCharacteristic,
@@ -39,6 +42,10 @@ actual class KMMBleServerCharacteristic(
     }
 
     private fun handleReadRequest(request: CBATTRequest) {
+        if (request.characteristic().UUID != native.UUID) {
+            return
+        }
+        Napier.i("handleReadRequest", tag = TAG)
         val dataToSend = _value.value.copyOfRange(
             _value.value.size - request.offset.toInt(),
             _value.value.size
@@ -49,7 +56,8 @@ actual class KMMBleServerCharacteristic(
     }
 
     private fun handleWriteRequest(requests: List<CBATTRequest>) {
-        requests.forEach {
+        Napier.i("handleWriteRequest", tag = TAG)
+        requests.filter { it.characteristic().UUID == native.UUID }.forEach {
             it.value?.toByteArray()?.let {
                 setValue(it)
             }

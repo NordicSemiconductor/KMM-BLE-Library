@@ -2,6 +2,7 @@ package advertisement
 
 import client.toCBUUID
 import client.toUuid
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,6 +43,8 @@ import server.NotificationsRecords
 import server.ReadRequest
 import server.WriteRequest
 
+private const val TAG = "BLE-TAG"
+
 @Suppress("CONFLICTING_OVERLOADS")
 class IOSServer(
     private val notificationsRecords: NotificationsRecords,
@@ -58,8 +61,6 @@ class IOSServer(
 
     private var services = listOf<CBService>()
 
-    private val profile: KMMBleServerProfile = KMMBleServerProfile(emptyList(), manager, notificationsRecords)
-
     override fun peripheralManagerDidUpdateState(peripheral: CBPeripheralManager) {
         _bleState.value = peripheral.state
     }
@@ -72,13 +73,14 @@ class IOSServer(
     }
 
     override fun peripheralManagerIsReadyToUpdateSubscribers(peripheral: CBPeripheralManager) {
-
+        Napier.i("Update subscribers", tag = TAG)
     }
 
     override fun peripheralManager(
         peripheral: CBPeripheralManager,
         didReceiveReadRequest: CBATTRequest
     ) {
+        Napier.i("Receive read request", tag = TAG)
         val central = didReceiveReadRequest.central
         val profile = getProfile(central)
 
@@ -89,10 +91,20 @@ class IOSServer(
         peripheral: CBPeripheralManager,
         didReceiveWriteRequests: List<*>
     ) {
-        val requests = didReceiveWriteRequests.map { it as CBATTRequest }
-        val central = requests.first().central
+        Napier.i("Receive write request", tag = TAG)
+        try {
 
-        profile.onEvent(WriteRequest(requests))
+            val requests = didReceiveWriteRequests.map { it as CBATTRequest }
+            Napier.i("Requests: $requests", tag = TAG)
+            val central = requests.first().central
+            Napier.i("Central: $central", tag = TAG)
+            val profile = getProfile(central)
+            Napier.i("Profile: $profile", tag = TAG)
+            profile.onEvent(WriteRequest(requests))
+        } catch (t: Throwable) {
+            Napier.i("Receive write request", tag = TAG, throwable = t)
+        }
+
     }
 
     override fun peripheralManager(
@@ -100,6 +112,7 @@ class IOSServer(
         central: CBCentral,
         didSubscribeToCharacteristic: CBCharacteristic
     ) {
+        Napier.i("Subscribe to characteristic", tag = TAG)
         notificationsRecords.addCentral(didSubscribeToCharacteristic.UUID.toUuid(), central)
     }
 
@@ -108,6 +121,7 @@ class IOSServer(
         central: CBCentral,
         didUnsubscribeFromCharacteristic: CBCharacteristic
     ) {
+        Napier.i("Unsubscribe from characteristic", tag = TAG)
         notificationsRecords.removeCentral(didUnsubscribeFromCharacteristic.UUID.toUuid(), central)
     }
 
@@ -116,6 +130,7 @@ class IOSServer(
         didAddService: CBService,
         error: NSError?
     ) {
+        Napier.i("Add service", tag = TAG)
         services = services + didAddService
     }
 
@@ -145,7 +160,7 @@ class IOSServer(
                 }
             }
 
-            CBMutableService(it.uuid.toCBUUID(), false).also {
+            CBMutableService(it.uuid.toCBUUID(), true).also {
                 it.setCharacteristics(characteristics)
             }
         }
@@ -161,8 +176,8 @@ class IOSServer(
 
     private fun getProfile(central: CBCentral): KMMBleServerProfile {
         return _connections.value.getOrElse(central) {
-            val profile = profile.copy()
-            _connections.value = _connections.value + (central to profile.copy())
+            val profile = KMMBleServerProfile(services, manager, notificationsRecords)
+            _connections.value = _connections.value + (central to profile)
             profile
         }
     }
@@ -173,7 +188,7 @@ class IOSServer(
                 KMMBlePermission.READ -> CBAttributePermissionsReadable
                 KMMBlePermission.WRITE -> CBAttributePermissionsWriteable
             }
-        }.reduce { acc, permission -> acc and permission }
+        }.reduce { acc, permission -> acc or permission }
     }
 
     private fun List<KMMCharacteristicProperty>.toDomain(): CBCharacteristicProperties {
@@ -184,6 +199,6 @@ class IOSServer(
                 KMMCharacteristicProperty.NOTIFY -> CBCharacteristicPropertyNotify
                 KMMCharacteristicProperty.INDICATE -> CBCharacteristicPropertyIndicate
             }
-        }.reduce { acc, permission -> acc and permission }
+        }.reduce { acc, permission -> acc or permission }
     }
 }

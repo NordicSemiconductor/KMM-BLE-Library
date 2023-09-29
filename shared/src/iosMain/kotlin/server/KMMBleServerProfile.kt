@@ -2,12 +2,17 @@ package server
 
 import com.benasher44.uuid.Uuid
 import platform.CoreBluetooth.CBPeripheralManager
+import platform.CoreBluetooth.CBService
 
 actual data class KMMBleServerProfile(
-    actual val services: List<KMMBleServerService>,
+    private val nativeServices: List<CBService>,
     private val manager: CBPeripheralManager,
     private val notificationsRecords: NotificationsRecords,
 ) {
+
+    actual val services: List<KMMBleServerService> = nativeServices.map {
+        KMMBleServerService(it, manager, notificationsRecords)
+    }
 
     actual fun findService(uuid: Uuid): KMMBleServerService? {
         return services.first { it.uuid == uuid }
