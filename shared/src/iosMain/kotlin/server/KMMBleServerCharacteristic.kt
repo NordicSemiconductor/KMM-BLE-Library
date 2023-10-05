@@ -45,7 +45,7 @@ actual class KMMBleServerCharacteristic(
         if (request.characteristic().UUID != native.UUID) {
             return
         }
-        Napier.i("handleReadRequest", tag = TAG)
+        Napier.i("handleReadRequest ${native.UUID}", tag = TAG)
         val dataToSend = _value.value.copyOfRange(
             _value.value.size - request.offset.toInt(),
             _value.value.size
@@ -56,8 +56,13 @@ actual class KMMBleServerCharacteristic(
     }
 
     private fun handleWriteRequest(requests: List<CBATTRequest>) {
-        Napier.i("handleWriteRequest", tag = TAG)
+        Napier.i("handleWriteRequest 1: ${native.UUID}", tag = TAG)
+
+        requests.onEach {
+            Napier.i("handleWriteRequest 2: ${it.characteristic().UUID}", tag = TAG)
+        }
         requests.filter { it.characteristic().UUID == native.UUID }.forEach {
+            Napier.i("handleWriteRequest 3: ${it.characteristic().UUID}", tag = TAG)
             it.value?.toByteArray()?.let {
                 setValue(it)
             }
@@ -66,11 +71,11 @@ actual class KMMBleServerCharacteristic(
     }
 
     actual fun setValue(value: ByteArray) {
+        Napier.i("set value", tag = TAG)
         _value.value = value
         val centralsToUpdate = notificationsRecords.getCentrals(native.UUID.toUuid())
 
         val newValue = value.toNSData()
-        native.setValue(newValue)
 
         manager.updateValue(newValue, native, centralsToUpdate)
     }

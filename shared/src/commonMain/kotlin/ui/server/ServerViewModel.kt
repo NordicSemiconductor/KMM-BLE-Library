@@ -5,6 +5,7 @@ import advertisement.KMMBleAdvertiser
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
 import com.benasher44.uuid.uuidFrom
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -19,10 +20,13 @@ import server.KMMBleServerCharacteristicConfig
 import server.KMMBleServerProfile
 import server.KMMBleServerServiceConfig
 import server.KMMCharacteristicProperty
+import ui.blinky.BlinkyLedParser.toDisplayString
 
 private val BLINKY_SERVICE_UUID = uuidFrom("00001523-1212-efde-1523-785feabcd123")
 private val BLINKY_BUTTON_CHARACTERISTIC_UUID = uuidFrom("00001524-1212-efde-1523-785feabcd123")
 private val BLINKY_LED_CHARACTERISTIC_UUID = uuidFrom("00001525-1212-efde-1523-785feabcd123")
+
+private const val TAG = "BLE-TAG"
 
 class ServerViewModel : ScreenModel, KoinComponent {
 
@@ -74,11 +78,13 @@ class ServerViewModel : ScreenModel, KoinComponent {
         this.buttonCharacteristic = buttonCharacteristic
 
         ledCharacteristic.value.onEach {
-            _state.value = _state.value.copy(isLedOn = !it.contentEquals(byteArrayOf(0x00)))
+            Napier.i("set led ${it.toDisplayString()}", tag = TAG)
+            _state.value = _state.value.copy(isLedOn = it.contentEquals(byteArrayOf(0x01)))
         }.launchIn(coroutineScope)
 
         buttonCharacteristic.value.onEach {
-            _state.value = _state.value.copy(isButtonPressed = !it.contentEquals(byteArrayOf(0x00)))
+            Napier.i("set button ${it.toDisplayString()}", tag = TAG)
+            _state.value = _state.value.copy(isButtonPressed = it.contentEquals(byteArrayOf(0x01)))
         }.launchIn(coroutineScope)
     }
 
@@ -100,6 +106,7 @@ class ServerViewModel : ScreenModel, KoinComponent {
     }
 
     fun onButtonPressedChanged(isButtonPressed: Boolean) {
+        Napier.i("onButton pressed 1: $isButtonPressed", tag = TAG)
         val value = if (isButtonPressed) {
             byteArrayOf(0x01)
         } else {
