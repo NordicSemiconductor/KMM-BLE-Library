@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
@@ -26,7 +27,10 @@ actual class KMMBleServer(private val context: Context) {
         } ?: emptyFlow()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    actual suspend fun startServer(services: List<KMMBleServerServiceConfig>) {
+    actual suspend fun startServer(
+        services: List<KMMBleServerServiceConfig>,
+        scope: CoroutineScope,
+    ) {
 
         val config = services.map {
             val characteristics = it.characteristics.map {
@@ -53,7 +57,7 @@ actual class KMMBleServer(private val context: Context) {
             )
         }
 
-        server = ServerBleGatt.create(context, *config.toTypedArray())
+        server = ServerBleGatt.create(context, scope, *config.toTypedArray())
     }
 
     actual suspend fun stopServer() {

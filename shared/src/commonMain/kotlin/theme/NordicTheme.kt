@@ -109,7 +109,7 @@ fun NordicTheme(content: @Composable () -> Unit) {
 
     MaterialTheme(
         colorScheme = colorScheme,
-//        typography = nordicTypography,
+        typography = nordicTypography,
     ) {
         val background = colorScheme.background
 

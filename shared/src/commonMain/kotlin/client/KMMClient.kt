@@ -1,10 +1,11 @@
 package client
 
+import kotlinx.coroutines.CoroutineScope
 import scanner.KMMDevice
 
 expect class KMMClient {
 
-    suspend fun connect(device: KMMDevice)
+    suspend fun connect(device: KMMDevice, scope: CoroutineScope)
 
     suspend fun disconnect()
 

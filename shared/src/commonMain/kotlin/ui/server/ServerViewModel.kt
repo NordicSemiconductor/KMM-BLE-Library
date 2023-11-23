@@ -62,7 +62,7 @@ class ServerViewModel : ScreenModel, KoinComponent {
         )
 
         coroutineScope.launch {
-            server.startServer(listOf(serviceConfig))
+            server.startServer(listOf(serviceConfig), this)
 
             server.connections
                 .onEach { it.values.forEach { setUpProfile(it) } }

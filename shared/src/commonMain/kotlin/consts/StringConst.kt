@@ -11,4 +11,8 @@ object StringConst {
     val BLINKY_BUTTON_DESCRIPTION = "The button state"
     val ON = "ON"
     val OFF = "OFF"
+
+    val CLIENT = "CLIENT"
+    val SERVER = "SERVER"
+    val START = "Start"
 }

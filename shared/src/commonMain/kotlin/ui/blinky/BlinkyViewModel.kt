@@ -31,7 +31,7 @@ class BlinkyViewModel(
 
     init {
         coroutineScope.launch {
-            client.connect(device)
+            client.connect(device, coroutineScope)
 
             val services = client.discoverServices()
 
