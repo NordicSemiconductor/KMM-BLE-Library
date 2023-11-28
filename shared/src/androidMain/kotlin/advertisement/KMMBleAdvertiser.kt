@@ -24,7 +24,10 @@ actual class KMMBleAdvertiser(private val context: Context) {
 
         val advertiserConfig = BleAdvertisingConfig(
             settings = BleAdvertisingSettings(
-                deviceName = settings.name
+                deviceName = settings.name,
+                legacyMode = true,
+                scannable = true,
+                connectable = true
             ),
             advertiseData = BleAdvertisingData(
                 ParcelUuid(settings.uuid),

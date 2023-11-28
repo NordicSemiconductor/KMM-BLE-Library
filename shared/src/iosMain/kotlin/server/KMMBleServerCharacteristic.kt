@@ -5,8 +5,11 @@ import client.toNSData
 import client.toUuid
 import com.benasher44.uuid.Uuid
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import platform.CoreBluetooth.CBATTErrorSuccess
 import platform.CoreBluetooth.CBATTRequest
 import platform.CoreBluetooth.CBDescriptor
@@ -64,13 +67,17 @@ actual class KMMBleServerCharacteristic(
         requests.filter { it.characteristic().UUID == native.UUID }.forEach {
             Napier.i("handleWriteRequest 3: ${it.characteristic().UUID}", tag = TAG)
             it.value?.toByteArray()?.let {
-                setValue(it)
+                sendUpdatedValue(it)
             }
             manager.respondToRequest(it, CBATTErrorSuccess)
         }
     }
 
-    actual fun setValue(value: ByteArray) {
+    actual suspend fun setValue(value: ByteArray) {
+        sendUpdatedValue(value)
+    }
+
+    private fun sendUpdatedValue(value: ByteArray) {
         Napier.i("set value", tag = TAG)
         _value.value = value
         val centralsToUpdate = notificationsRecords.getCentrals(native.UUID.toUuid())

@@ -22,7 +22,7 @@ actual class KMMBleServerCharacteristic(
 
     actual val value: Flow<ByteArray> = native.value.map { it.value }
 
-    actual fun setValue(value: ByteArray) {
-        native.setValue(DataByteArray(value))
+    actual suspend fun setValue(value: ByteArray) {
+        native.setValueAndNotifyClient(DataByteArray(value))
     }
 }

@@ -1,7 +1,6 @@
 package client
 
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,7 +69,7 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
         }
     }
 
-    suspend fun connect(device: KMMDevice, scope: CoroutineScope) {
+    suspend fun connect(device: KMMDevice) {
         peripheral = (device.device as PeripheralDevice).peripheral
         peripheral.delegate = this
         Napier.i("Connect", tag = TAG)

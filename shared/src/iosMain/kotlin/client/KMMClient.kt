@@ -1,5 +1,6 @@
 package client
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import scanner.KMMDevice
 
@@ -12,7 +13,7 @@ actual class KMMClient(
         return client.value.scan()
     }
 
-    actual suspend fun connect(device: KMMDevice) {
+    actual suspend fun connect(device: KMMDevice, scope: CoroutineScope) {
         client.value.connect(device)
     }
 

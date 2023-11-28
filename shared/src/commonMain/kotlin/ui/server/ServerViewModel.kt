@@ -112,6 +112,8 @@ class ServerViewModel : ScreenModel, KoinComponent {
         } else {
             byteArrayOf(0x00)
         }
-        buttonCharacteristic?.setValue(value)
+        coroutineScope.launch {
+            buttonCharacteristic?.setValue(value)
+        }
     }
 }
