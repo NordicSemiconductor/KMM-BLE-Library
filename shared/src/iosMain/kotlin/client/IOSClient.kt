@@ -1,5 +1,6 @@
 package client
 
+import com.benasher44.uuid.uuidFrom
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import platform.CoreBluetooth.CBAdvertisementDataServiceUUIDsKey
 import platform.CoreBluetooth.CBCentralManager
 import platform.CoreBluetooth.CBCentralManagerDelegateProtocol
 import platform.CoreBluetooth.CBCentralManagerStatePoweredOn
@@ -20,6 +22,7 @@ import platform.CoreBluetooth.CBManagerStateUnknown
 import platform.CoreBluetooth.CBPeripheral
 import platform.CoreBluetooth.CBPeripheralDelegateProtocol
 import platform.CoreBluetooth.CBService
+import platform.CoreBluetooth.CBUUID
 import platform.Foundation.NSData
 import platform.Foundation.NSError
 import platform.Foundation.NSNumber
@@ -30,6 +33,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 private const val TAG = "BLE-TAG"
+private val BLINKY_SERVICE_UUID = uuidFrom("00001523-1212-efde-1523-785feabcd123")
 
 @Suppress("CONFLICTING_OVERLOADS")
 class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDelegateProtocol {
@@ -238,6 +242,16 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
         RSSI: NSNumber,
     ) {
         val kmmDevice = KMMDevice(PeripheralDevice(didDiscoverPeripheral))
+        Napier.d { "${advertisementData[CBAdvertisementDataServiceUUIDsKey]}" }
+        val uuid = try {
+            (advertisementData[CBAdvertisementDataServiceUUIDsKey] as? List<CBUUID>)?.first()?.toUuid()
+        } catch (e: Exception) {
+            null
+        }
+        Napier.d { "Uuid: $uuid" }
+        if (uuid != BLINKY_SERVICE_UUID) {
+            return
+        }
         _scannedDevices.value = _scannedDevices.value + kmmDevice
     }
 
