@@ -8,15 +8,12 @@ import cafe.adriel.voyager.navigator.Navigator
 import theme.NordicTheme
 import ui.main.MainScreen
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(
     content: @Composable () -> Unit = { Content() }
 ) {
     NordicTheme {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            NordicAppBar("nRF Blinky")
-
             content()
         }
     }

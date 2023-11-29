@@ -1,6 +1,10 @@
 package consts
 
 object StringConst {
+    val MAIN_SCREEN = "nRF Blinky"
+    val BLINKY_SCREEN = "Client"
+    val SCANNER_SCREEN = "Scanner"
+    val SERVER_SCREEN = "Server"
     val CANCEL = "Cancel"
     val RETRY = "Retry"
 
