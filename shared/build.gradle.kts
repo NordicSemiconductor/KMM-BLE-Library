@@ -27,7 +27,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+                implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.20")
                 implementation("com.juul.kable:core:0.25.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
                 implementation("io.insert-koin:koin-core:3.4.3")
@@ -40,14 +40,14 @@ kotlin {
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
                 implementation("com.benasher44:uuid:0.8.0")
-                implementation("cafe.adriel.voyager:voyager-navigator:1.0.0-rc06")
+                implementation("cafe.adriel.voyager:voyager-navigator:1.0.0-rc10")
             }
         }
         val androidMain by getting {
             dependencies {
-                api("androidx.activity:activity-compose:1.6.1")
+                api("androidx.activity:activity-compose:1.8.1")
                 api("androidx.appcompat:appcompat:1.6.1")
-                api("androidx.core:core-ktx:1.9.0")
+                api("androidx.core:core-ktx:1.12.0")
                 implementation(libs.nordic.blek.scanner)
                 implementation(libs.nordic.blek.client)
                 implementation(libs.nordic.blek.advertiser)
