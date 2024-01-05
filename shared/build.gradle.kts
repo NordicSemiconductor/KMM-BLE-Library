@@ -71,7 +71,7 @@ kotlin {
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
                 implementation("com.benasher44:uuid:0.8.0")
-                implementation("cafe.adriel.voyager:voyager-navigator:1.0.0-rc10")
+                implementation("cafe.adriel.voyager:voyager-navigator:1.0.0")
             }
         }
         val androidMain by getting {
