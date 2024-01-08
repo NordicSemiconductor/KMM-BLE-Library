@@ -30,10 +30,10 @@
  */
 
 plugins {
-    kotlin("multiplatform")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.android.library)
     kotlin("native.cocoapods")
-    id("com.android.library")
-    id("org.jetbrains.compose")
 }
 
 kotlin {
@@ -58,34 +58,32 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.20")
-                implementation("com.juul.kable:core:0.25.1")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-                implementation("io.insert-koin:koin-core:3.4.3")
-                implementation("io.insert-koin:koin-compose:1.0.4")
-                implementation("io.github.aakira:napier:2.6.1")
+                implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.koin.core)
+                implementation(libs.koin.compose)
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
                 implementation(compose.materialIconsExtended)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
-                implementation("com.benasher44:uuid:0.8.0")
-                implementation("cafe.adriel.voyager:voyager-navigator:1.0.0-rc10")
+                implementation(libs.kmm.uuid)
+                implementation(libs.kmm.logs)
+                implementation(libs.kmm.voyager)
             }
         }
         val androidMain by getting {
             dependencies {
-                api("androidx.activity:activity-compose:1.8.1")
-                api("androidx.appcompat:appcompat:1.6.1")
-                api("androidx.core:core-ktx:1.12.0")
+                api(libs.androidx.activity.compose)
+                api(libs.androidx.appcompat)
+                api(libs.androidx.core.ktx)
                 implementation(libs.nordic.blek.scanner)
                 implementation(libs.nordic.blek.client)
                 implementation(libs.nordic.blek.advertiser)
                 implementation(libs.nordic.blek.server)
                 implementation(libs.nordic.permissions.ble)
                 implementation(libs.nordic.permissions.internet)
-                implementation("com.benasher44:uuid:0.8.0")
             }
         }
         val iosX64Main by getting
@@ -110,7 +108,6 @@ android {
 
     defaultConfig {
         minSdk = (findProperty("android.minSdk") as String).toInt()
-        targetSdk = (findProperty("android.targetSdk") as String).toInt()
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
