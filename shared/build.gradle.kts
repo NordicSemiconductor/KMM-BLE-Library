@@ -61,6 +61,10 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    androidTarget {
+        publishLibraryVariants("release", "debug")
+    }
+
     cocoapods {
         version = "1.0.0"
         summary = "Some description for the Shared Module"
