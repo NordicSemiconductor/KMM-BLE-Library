@@ -29,48 +29,31 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package ui.blinky
+package client
 
-import NordicAppBar
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.model.rememberScreenModel
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import consts.StringConst
+import android.annotation.SuppressLint
+import android.content.Context
+import kotlinx.coroutines.CoroutineScope
+import no.nordicsemi.android.kotlin.ble.client.main.callback.ClientBleGatt
+import no.nordicsemi.android.kotlin.ble.core.ServerDevice
 import scanner.IoTDevice
 
-class BlinkyScreen(private val device: IoTDevice) : Screen {
+@SuppressLint("MissingPermission")
+actual class Client(
+    private val context: Context
+) {
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    override fun Content() {
-        val viewModel = rememberScreenModel { BlinkyViewModel(device) }
-        val state = viewModel.state.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow
+    private var client: ClientBleGatt? = null
 
-        Scaffold(
-            topBar = {
-                NordicAppBar(StringConst.BLINKY_SCREEN, onNavigationButtonClick = {
-                    navigator.pop()
-                })
-            }
-        ) {
-            Box(Modifier.padding(it)) {
-                BlinkyView(
-                    state.value.isLedOn,
-                    state.value.isButtonPressed,
-                    { viewModel.turnLed() },
-                    Modifier.padding(16.dp)
-                )
-            }
-        }
+    actual suspend fun connect(device: IoTDevice, scope: CoroutineScope) {
+        client = ClientBleGatt.connect(context, device.device as ServerDevice, scope)
+    }
+
+    actual suspend fun disconnect() {
+        client?.disconnect()
+    }
+
+    actual suspend fun discoverServices(): ClientServices {
+        return client!!.discoverServices().toCrossplatform()
     }
 }

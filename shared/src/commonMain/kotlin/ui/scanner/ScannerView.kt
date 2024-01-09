@@ -51,11 +51,11 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import scanner.KMMDevice
+import scanner.IoTDevice
 import ui.blinky.BlinkyScreen
 
 @Composable
-fun ScannerView(devices: List<KMMDevice>) {
+fun ScannerView(devices: List<IoTDevice>) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -69,7 +69,7 @@ fun ScannerView(devices: List<KMMDevice>) {
 }
 
 @Composable
-fun DeviceView(device: KMMDevice) {
+fun DeviceView(device: IoTDevice) {
     val navigator = LocalNavigator.currentOrThrow
     DeviceListItem(
         device.name,

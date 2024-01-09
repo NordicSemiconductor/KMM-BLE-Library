@@ -29,48 +29,32 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package ui.blinky
+package server
 
-import NordicAppBar
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.model.rememberScreenModel
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import consts.StringConst
-import scanner.IoTDevice
+import client.toUuid
+import com.benasher44.uuid.Uuid
+import platform.CoreBluetooth.CBMutableCharacteristic
+import platform.CoreBluetooth.CBPeripheralManager
+import platform.CoreBluetooth.CBService
 
-class BlinkyScreen(private val device: IoTDevice) : Screen {
+actual class ServerService(
+    val service: CBService,
+    private val manager: CBPeripheralManager,
+    private val notificationsRecords: NotificationsRecords,
+) {
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    override fun Content() {
-        val viewModel = rememberScreenModel { BlinkyViewModel(device) }
-        val state = viewModel.state.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow
+    actual val uuid: Uuid = service.UUID.toUuid()
 
-        Scaffold(
-            topBar = {
-                NordicAppBar(StringConst.BLINKY_SCREEN, onNavigationButtonClick = {
-                    navigator.pop()
-                })
-            }
-        ) {
-            Box(Modifier.padding(it)) {
-                BlinkyView(
-                    state.value.isLedOn,
-                    state.value.isButtonPressed,
-                    { viewModel.turnLed() },
-                    Modifier.padding(16.dp)
-                )
-            }
-        }
+    actual val characteristics: List<ServerCharacteristic> = service.characteristics
+        ?.map { it as CBMutableCharacteristic }
+        ?.map { ServerCharacteristic(it, manager, notificationsRecords) }
+        ?: emptyList()
+
+    actual fun findCharacteristic(uuid: Uuid): ServerCharacteristic? {
+        return characteristics.find { it.uuid == uuid }
+    }
+
+    fun onEvent(event: ServerRequest) {
+        characteristics.forEach { it.onEvent(event) }
     }
 }

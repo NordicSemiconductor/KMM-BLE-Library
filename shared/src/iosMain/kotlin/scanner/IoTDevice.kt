@@ -29,48 +29,51 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package ui.blinky
+package scanner
 
-import NordicAppBar
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.model.rememberScreenModel
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import consts.StringConst
-import scanner.IoTDevice
+import platform.CoreBluetooth.CBCentral
+import platform.CoreBluetooth.CBPeripheral
 
-class BlinkyScreen(private val device: IoTDevice) : Screen {
+actual data class IoTDevice(internal val device: NativeDevice) {
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    override fun Content() {
-        val viewModel = rememberScreenModel { BlinkyViewModel(device) }
-        val state = viewModel.state.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow
+    actual val name: String
+        get() = device.name
 
-        Scaffold(
-            topBar = {
-                NordicAppBar(StringConst.BLINKY_SCREEN, onNavigationButtonClick = {
-                    navigator.pop()
-                })
-            }
-        ) {
-            Box(Modifier.padding(it)) {
-                BlinkyView(
-                    state.value.isLedOn,
-                    state.value.isButtonPressed,
-                    { viewModel.turnLed() },
-                    Modifier.padding(16.dp)
-                )
-            }
-        }
+    actual val address: String = device.address
+
+    companion object {
+
+        var counter: Int = 0
     }
+}
+
+sealed interface NativeDevice {
+
+    val name: String
+
+    val address: String
+
+    companion object {
+
+        var counter: Int = 0
+    }
+}
+
+data class PeripheralDevice(internal val peripheral: CBPeripheral): NativeDevice {
+
+    override val name: String
+        get() = peripheral.name ?: "Unknown"
+
+    override val address: String
+        get() = "00:00:00:00:${NativeDevice.counter++}"
+
+}
+
+data class CentralDevice(internal val central: CBCentral): NativeDevice {
+
+    override val name: String
+        get() = "No name"
+
+    override val address: String
+        get() = "00:00:00:00:${NativeDevice.counter++}"
 }

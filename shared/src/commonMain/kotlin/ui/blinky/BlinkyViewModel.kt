@@ -33,8 +33,8 @@ package ui.blinky
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
-import client.KMMCharacteristic
-import client.KMMClient
+import client.ClientCharacteristic
+import client.Client
 import com.benasher44.uuid.uuidFrom
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,22 +43,22 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import scanner.KMMDevice
+import scanner.IoTDevice
 
 private val BLINKY_SERVICE_UUID = uuidFrom("00001523-1212-efde-1523-785feabcd123")
 private val BLINKY_BUTTON_CHARACTERISTIC_UUID = uuidFrom("00001524-1212-efde-1523-785feabcd123")
 private val BLINKY_LED_CHARACTERISTIC_UUID = uuidFrom("00001525-1212-efde-1523-785feabcd123")
 
 class BlinkyViewModel(
-    private val device: KMMDevice
+    private val device: IoTDevice
 ) : ScreenModel, KoinComponent {
 
-    private val client: KMMClient by inject()
+    private val client: Client by inject()
 
     private val _state = MutableStateFlow(BlinkyViewState())
     val state = _state.asStateFlow()
 
-    private lateinit var ledCharacteristic: KMMCharacteristic
+    private lateinit var ledCharacteristic: ClientCharacteristic
 
     init {
         coroutineScope.launch {

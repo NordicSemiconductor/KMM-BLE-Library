@@ -29,48 +29,46 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package ui.blinky
+package advertisement
 
-import NordicAppBar
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.model.rememberScreenModel
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import consts.StringConst
-import scanner.IoTDevice
+import android.annotation.SuppressLint
+import android.content.Context
+import android.os.ParcelUuid
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.launchIn
+import no.nordicsemi.android.kotlin.ble.advertiser.BleAdvertiser
+import no.nordicsemi.android.kotlin.ble.core.advertiser.BleAdvertisingConfig
+import no.nordicsemi.android.kotlin.ble.core.advertiser.BleAdvertisingData
+import no.nordicsemi.android.kotlin.ble.core.advertiser.BleAdvertisingSettings
 
-class BlinkyScreen(private val device: IoTDevice) : Screen {
+actual class Advertiser(private val context: Context) {
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    override fun Content() {
-        val viewModel = rememberScreenModel { BlinkyViewModel(device) }
-        val state = viewModel.state.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow
+    private var job: Job? = null
 
-        Scaffold(
-            topBar = {
-                NordicAppBar(StringConst.BLINKY_SCREEN, onNavigationButtonClick = {
-                    navigator.pop()
-                })
-            }
-        ) {
-            Box(Modifier.padding(it)) {
-                BlinkyView(
-                    state.value.isLedOn,
-                    state.value.isButtonPressed,
-                    { viewModel.turnLed() },
-                    Modifier.padding(16.dp)
-                )
-            }
-        }
+    private val scope = CoroutineScope(SupervisorJob())
+
+    @SuppressLint("MissingPermission")
+    actual suspend fun advertise(settings: AdvertisementSettings) {
+        val advertiser = BleAdvertiser.create(context)
+
+        val advertiserConfig = BleAdvertisingConfig(
+            settings = BleAdvertisingSettings(
+                deviceName = settings.name,
+                legacyMode = true,
+                scannable = true,
+                connectable = true
+            ),
+            advertiseData = BleAdvertisingData(
+                ParcelUuid(settings.uuid),
+            )
+        )
+
+        job = advertiser.advertise(advertiserConfig).launchIn(scope)
+    }
+
+    actual suspend fun stop() {
+        job?.cancel()
     }
 }

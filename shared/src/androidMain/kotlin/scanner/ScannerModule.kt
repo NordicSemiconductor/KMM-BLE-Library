@@ -31,15 +31,15 @@
 
 package scanner
 
-import advertisement.KMMBleAdvertiser
-import client.KMMClient
+import advertisement.Advertiser
+import client.Client
 import org.koin.core.module.Module
 import org.koin.dsl.module
-import server.KMMBleServer
+import server.Server
 
 actual val ScannerModule: Module = module {
-    single { KMMScanner(get()) }
-    single { KMMClient(get()) }
-    single { KMMBleServer(get()) }
-    single { KMMBleAdvertiser(get()) }
+    single { Scanner(get()) }
+    single { Client(get()) }
+    single { Server(get()) }
+    single { Advertiser(get()) }
 }

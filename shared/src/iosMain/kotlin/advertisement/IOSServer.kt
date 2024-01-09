@@ -65,11 +65,11 @@ import platform.CoreBluetooth.CBService
 import platform.Foundation.NSError
 import platform.darwin.NSObject
 import scanner.CentralDevice
-import scanner.KMMDevice
-import server.KMMBlePermission
-import server.KMMBleServerProfile
-import server.KMMBleServerServiceConfig
-import server.KMMCharacteristicProperty
+import scanner.IoTDevice
+import server.GattPermission
+import server.ServerProfile
+import server.BleServerServiceConfig
+import server.GattProperty
 import server.NotificationsRecords
 import server.ReadRequest
 import server.WriteRequest
@@ -85,9 +85,9 @@ class IOSServer(
     private val _bleState = MutableStateFlow(CBPeripheralManagerStateUnknown)
     val bleState: StateFlow<CBPeripheralManagerState> = _bleState.asStateFlow()
 
-    private val _connections = MutableStateFlow<Map<CBCentral, KMMBleServerProfile>>(emptyMap())
-    val connections: Flow<Map<KMMDevice, KMMBleServerProfile>> = _connections.map {
-        it.mapKeys { KMMDevice(CentralDevice(it.key)) }
+    private val _connections = MutableStateFlow<Map<CBCentral, ServerProfile>>(emptyMap())
+    val connections: Flow<Map<IoTDevice, ServerProfile>> = _connections.map {
+        it.mapKeys { IoTDevice(CentralDevice(it.key)) }
     }
 
     private var services = listOf<CBService>()
@@ -165,7 +165,7 @@ class IOSServer(
         services = services + didAddService
     }
 
-    suspend fun advertise(settings: KMMAdvertisementSettings) {
+    suspend fun advertise(settings: AdvertisementSettings) {
         bleState.first { it == CBCentralManagerStatePoweredOn }
         val map: Map<Any?, Any> = mapOf(
             CBAdvertisementDataLocalNameKey to settings.name,
@@ -174,7 +174,7 @@ class IOSServer(
         manager.startAdvertising(map)
     }
 
-    suspend fun startServer(services: List<KMMBleServerServiceConfig>) {
+    suspend fun startServer(services: List<BleServerServiceConfig>) {
         bleState.first { it == CBCentralManagerStatePoweredOn }
         val iosServices = services.map {
             val characteristics = it.characteristics.map {
@@ -205,30 +205,30 @@ class IOSServer(
         manager.stopAdvertising()
     }
 
-    private fun getProfile(central: CBCentral): KMMBleServerProfile {
+    private fun getProfile(central: CBCentral): ServerProfile {
         return _connections.value.getOrElse(central) {
-            val profile = KMMBleServerProfile(services, manager, notificationsRecords)
+            val profile = ServerProfile(services, manager, notificationsRecords)
             _connections.value = _connections.value + (central to profile)
             profile
         }
     }
 
-    private fun List<KMMBlePermission>.toDomain(): CBAttributePermissions {
+    private fun List<GattPermission>.toDomain(): CBAttributePermissions {
         return this.map {
             when (it) {
-                KMMBlePermission.READ -> CBAttributePermissionsReadable
-                KMMBlePermission.WRITE -> CBAttributePermissionsWriteable
+                GattPermission.READ -> CBAttributePermissionsReadable
+                GattPermission.WRITE -> CBAttributePermissionsWriteable
             }
         }.reduce { acc, permission -> acc or permission }
     }
 
-    private fun List<KMMCharacteristicProperty>.toDomain(): CBCharacteristicProperties {
+    private fun List<GattProperty>.toDomain(): CBCharacteristicProperties {
         return this.map {
             when (it) {
-                KMMCharacteristicProperty.READ -> CBCharacteristicPropertyRead
-                KMMCharacteristicProperty.WRITE -> CBCharacteristicPropertyWrite
-                KMMCharacteristicProperty.NOTIFY -> CBCharacteristicPropertyNotify
-                KMMCharacteristicProperty.INDICATE -> CBCharacteristicPropertyIndicate
+                GattProperty.READ -> CBCharacteristicPropertyRead
+                GattProperty.WRITE -> CBCharacteristicPropertyWrite
+                GattProperty.NOTIFY -> CBCharacteristicPropertyNotify
+                GattProperty.INDICATE -> CBCharacteristicPropertyIndicate
             }
         }.reduce { acc, permission -> acc or permission }
     }

@@ -29,48 +29,48 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package ui.blinky
+package client
 
-import NordicAppBar
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.model.rememberScreenModel
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import consts.StringConst
-import scanner.IoTDevice
+import com.benasher44.uuid.Uuid
+import platform.CoreBluetooth.CBDescriptor
+import platform.CoreBluetooth.CBPeripheral
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
-class BlinkyScreen(private val device: IoTDevice) : Screen {
+actual class ClientDescriptor(
+    private val peripheral: CBPeripheral,
+    private val native: CBDescriptor,
+) {
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    override fun Content() {
-        val viewModel = rememberScreenModel { BlinkyViewModel(device) }
-        val state = viewModel.state.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow
+    val uuid: Uuid = native.UUID.toUuid()
 
-        Scaffold(
-            topBar = {
-                NordicAppBar(StringConst.BLINKY_SCREEN, onNavigationButtonClick = {
-                    navigator.pop()
-                })
+    private var onDescriptorWrite: ((OnGattDescriptorWrite) -> Unit)? = null
+    private var onDescriptorRead: ((OnGattDescriptorRead) -> Unit)? = null
+
+    internal fun onEvent(event: DescriptorEvent) {
+        when (event) {
+            is OnGattDescriptorRead -> onDescriptorRead?.invoke(event)
+            is OnGattDescriptorWrite -> onDescriptorWrite?.invoke(event)
+        }
+    }
+
+    actual suspend fun write(value: ByteArray) {
+        return suspendCoroutine { continuation ->
+            onDescriptorWrite = {
+                onDescriptorWrite = null
+                continuation.resume(Unit)
             }
-        ) {
-            Box(Modifier.padding(it)) {
-                BlinkyView(
-                    state.value.isLedOn,
-                    state.value.isButtonPressed,
-                    { viewModel.turnLed() },
-                    Modifier.padding(16.dp)
-                )
+            peripheral.writeValue(value.toNSData(), native)
+        }
+    }
+
+    actual suspend fun read(): ByteArray {
+        return suspendCoroutine { continuation ->
+            onDescriptorRead = {
+                onDescriptorRead = null
+                continuation.resume(it.data?.toByteArray() ?: byteArrayOf())
             }
+            peripheral.readValueForDescriptor(native)
         }
     }
 }

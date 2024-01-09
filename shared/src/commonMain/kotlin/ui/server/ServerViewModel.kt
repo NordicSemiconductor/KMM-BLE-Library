@@ -31,8 +31,8 @@
 
 package ui.server
 
-import advertisement.KMMAdvertisementSettings
-import advertisement.KMMBleAdvertiser
+import advertisement.AdvertisementSettings
+import advertisement.Advertiser
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
 import com.benasher44.uuid.uuidFrom
@@ -44,13 +44,13 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import server.KMMBlePermission
-import server.KMMBleServer
-import server.KMMBleServerCharacteristic
-import server.KMMBleServerCharacteristicConfig
-import server.KMMBleServerProfile
-import server.KMMBleServerServiceConfig
-import server.KMMCharacteristicProperty
+import server.GattPermission
+import server.Server
+import server.ServerCharacteristic
+import server.BleServerCharacteristicConfig
+import server.ServerProfile
+import server.BleServerServiceConfig
+import server.GattProperty
 import ui.blinky.BlinkyLedParser.toDisplayString
 
 private val BLINKY_SERVICE_UUID = uuidFrom("00001523-1212-efde-1523-785feabcd123")
@@ -61,33 +61,33 @@ private const val TAG = "BLE-TAG"
 
 class ServerViewModel : ScreenModel, KoinComponent {
 
-    private val advertiser: KMMBleAdvertiser by inject()
-    private val server: KMMBleServer by inject()
+    private val advertiser: Advertiser by inject()
+    private val server: Server by inject()
 
     private val _state = MutableStateFlow(ServerState())
     val state = _state.asStateFlow()
 
-    private var buttonCharacteristic: KMMBleServerCharacteristic? = null
+    private var buttonCharacteristic: ServerCharacteristic? = null
 
     init {
         //Define led characteristic
-        val ledCharacteristic = KMMBleServerCharacteristicConfig(
+        val ledCharacteristic = BleServerCharacteristicConfig(
             BLINKY_LED_CHARACTERISTIC_UUID,
-            listOf(KMMCharacteristicProperty.READ, KMMCharacteristicProperty.WRITE),
-            listOf(KMMBlePermission.READ, KMMBlePermission.WRITE),
+            listOf(GattProperty.READ, GattProperty.WRITE),
+            listOf(GattPermission.READ, GattPermission.WRITE),
             emptyList()
         )
 
         //Define button characteristic
-        val buttonCharacteristic = KMMBleServerCharacteristicConfig(
+        val buttonCharacteristic = BleServerCharacteristicConfig(
             BLINKY_BUTTON_CHARACTERISTIC_UUID,
-            listOf(KMMCharacteristicProperty.READ, KMMCharacteristicProperty.NOTIFY),
-            listOf(KMMBlePermission.READ, KMMBlePermission.WRITE),
+            listOf(GattProperty.READ, GattProperty.NOTIFY),
+            listOf(GattPermission.READ, GattPermission.WRITE),
             emptyList()
         )
 
         //Put led and button characteristics inside a service
-        val serviceConfig = KMMBleServerServiceConfig(
+        val serviceConfig = BleServerServiceConfig(
             BLINKY_SERVICE_UUID,
             listOf(ledCharacteristic, buttonCharacteristic)
         )
@@ -101,7 +101,7 @@ class ServerViewModel : ScreenModel, KoinComponent {
         }
     }
 
-    private fun setUpProfile(profile: KMMBleServerProfile) {
+    private fun setUpProfile(profile: ServerProfile) {
         val service = profile.findService(BLINKY_SERVICE_UUID)!!
         val ledCharacteristic = service.findCharacteristic(BLINKY_LED_CHARACTERISTIC_UUID)!!
         val buttonCharacteristic = service.findCharacteristic(BLINKY_BUTTON_CHARACTERISTIC_UUID)!!
@@ -121,7 +121,7 @@ class ServerViewModel : ScreenModel, KoinComponent {
 
     fun advertise() {
         coroutineScope.launch {
-            advertiser.advertise(KMMAdvertisementSettings(
+            advertiser.advertise(AdvertisementSettings(
                 name = "Super Server",
                 uuid = BLINKY_SERVICE_UUID
             ))

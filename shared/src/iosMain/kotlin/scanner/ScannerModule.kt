@@ -33,21 +33,21 @@ package scanner
 
 import advertisement.IOSServer
 import advertisement.IOSServerWrapper
-import advertisement.KMMBleAdvertiser
+import advertisement.Advertiser
 import client.IOSClient
 import client.IOSClientWrapper
-import client.KMMClient
+import client.Client
 import org.koin.core.module.Module
 import org.koin.dsl.module
-import server.KMMBleServer
+import server.Server
 import server.NotificationsRecords
 
 actual val ScannerModule: Module = module {
     single { IOSClientWrapper(IOSClient()) }
-    single { KMMScanner(get()) }
-    single { KMMClient(get()) }
+    single { Scanner(get()) }
+    single { Client(get()) }
     single { NotificationsRecords() }
     single { IOSServerWrapper(IOSServer(get())) }
-    single { KMMBleServer(get()) }
-    single { KMMBleAdvertiser(get()) }
+    single { Server(get()) }
+    single { Advertiser(get()) }
 }

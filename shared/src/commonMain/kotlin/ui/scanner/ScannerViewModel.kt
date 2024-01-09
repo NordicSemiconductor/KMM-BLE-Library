@@ -39,14 +39,14 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import scanner.KMMDevice
-import scanner.KMMScanner
+import scanner.IoTDevice
+import scanner.Scanner
 
 class ScannerViewModel : ScreenModel, KoinComponent {
 
-    private val scanner: KMMScanner by inject()
+    private val scanner: Scanner by inject()
 
-    private val _state = MutableStateFlow(emptyList<KMMDevice>())
+    private val _state = MutableStateFlow(emptyList<IoTDevice>())
     val state = _state.asStateFlow()
 
     init {

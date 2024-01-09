@@ -58,7 +58,7 @@ import platform.Foundation.NSData
 import platform.Foundation.NSError
 import platform.Foundation.NSNumber
 import platform.darwin.NSObject
-import scanner.KMMDevice
+import scanner.IoTDevice
 import scanner.PeripheralDevice
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -77,9 +77,9 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
     private var onDeviceDisconnected: (() -> Unit)? = null
     private var onServicesDiscovered: ((OperationStatus) -> Unit)? = null
 
-    private var services: KMMServices? = null
+    private var services: ClientServices? = null
 
-    private val _scannedDevices = MutableStateFlow<List<KMMDevice>>(emptyList())
+    private val _scannedDevices = MutableStateFlow<List<IoTDevice>>(emptyList())
     val scannedDevices = _scannedDevices.asStateFlow()
 
     private val _bleState = MutableStateFlow(CBManagerStateUnknown)
@@ -89,7 +89,7 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
         services?.onEvent(event)
     }
 
-    fun scan(): Flow<List<KMMDevice>> {
+    fun scan(): Flow<List<IoTDevice>> {
         return callbackFlow {
             bleState.first { it == CBCentralManagerStatePoweredOn }
             manager.scanForPeripheralsWithServices(null, null)
@@ -104,7 +104,7 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
         }
     }
 
-    suspend fun connect(device: KMMDevice) {
+    suspend fun connect(device: IoTDevice) {
         peripheral = (device.device as PeripheralDevice).peripheral
         peripheral.delegate = this
         Napier.i("Connect", tag = TAG)
@@ -129,15 +129,15 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
         }
     }
 
-    suspend fun discoverServices(): KMMServices {
+    suspend fun discoverServices(): ClientServices {
         Napier.i("Discover services", tag = TAG)
         return suspendCoroutine { continuation ->
             onServicesDiscovered = {
                 onServicesDiscovered = null
                 val nativeServices = peripheral.services?.map { it as CBService } ?: emptyList()
-                val kmmServices = KMMServices(peripheral, nativeServices)
-                services = kmmServices
-                continuation.resume(kmmServices)
+                val clientServices = ClientServices(peripheral, nativeServices)
+                services = clientServices
+                continuation.resume(clientServices)
             }
             peripheral.discoverServices(null)
         }
@@ -272,7 +272,7 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
         advertisementData: Map<Any?, *>,
         RSSI: NSNumber,
     ) {
-        val kmmDevice = KMMDevice(PeripheralDevice(didDiscoverPeripheral))
+        val ioTDevice = IoTDevice(PeripheralDevice(didDiscoverPeripheral))
         Napier.d { "${advertisementData[CBAdvertisementDataServiceUUIDsKey]}" }
         val uuid = try {
             (advertisementData[CBAdvertisementDataServiceUUIDsKey] as? List<CBUUID>)?.first()?.toUuid()
@@ -283,7 +283,7 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
         if (uuid != BLINKY_SERVICE_UUID) {
             return
         }
-        _scannedDevices.value = _scannedDevices.value + kmmDevice
+        _scannedDevices.value = _scannedDevices.value + ioTDevice
     }
 
     private fun getOperationStatus(error: NSError?): OperationStatus {
