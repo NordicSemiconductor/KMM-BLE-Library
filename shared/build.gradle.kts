@@ -33,7 +33,25 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.android.library)
+    alias(libs.plugins.nordic.nexus)
     kotlin("native.cocoapods")
+}
+
+group = "no.nordicsemi.kmm"
+
+nordicNexusPublishing {
+    POM_ARTIFACT_ID = "ble"
+    POM_NAME = "Nordic Kotlin Multiplatform Library for BLE."
+
+    POM_DESCRIPTION = "Nordic Kotlin Multiplatform Library for BLE."
+    POM_URL = "https://github.com/NordicSemiconductor/KMM-BLE-Library"
+    POM_SCM_URL = "https://github.com/NordicSemiconductor/KMM-BLE-Library"
+    POM_SCM_CONNECTION = "scm:git@github.com:NordicPlayground/KMM-BLE-Library.git"
+    POM_SCM_DEV_CONNECTION = "scm:git@github.com:NordicPlayground/KMM-BLE-Library.git"
+
+    POM_DEVELOPER_ID = "syzi"
+    POM_DEVELOPER_NAME = "Sylwester Zieliński"
+    POM_DEVELOPER_EMAIL = "sylwester.zielinski@nordicsemi.no"
 }
 
 kotlin {
