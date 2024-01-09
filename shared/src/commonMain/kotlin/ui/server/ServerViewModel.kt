@@ -34,7 +34,7 @@ package ui.server
 import advertisement.AdvertisementSettings
 import advertisement.Advertiser
 import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.coroutineScope
+import cafe.adriel.voyager.core.model.screenModelScope
 import com.benasher44.uuid.uuidFrom
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,13 +44,13 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import server.BleServerCharacteristicConfig
+import server.BleServerServiceConfig
 import server.GattPermission
+import server.GattProperty
 import server.Server
 import server.ServerCharacteristic
-import server.BleServerCharacteristicConfig
 import server.ServerProfile
-import server.BleServerServiceConfig
-import server.GattProperty
 import ui.blinky.BlinkyLedParser.toDisplayString
 
 private val BLINKY_SERVICE_UUID = uuidFrom("00001523-1212-efde-1523-785feabcd123")
@@ -92,12 +92,12 @@ class ServerViewModel : ScreenModel, KoinComponent {
             listOf(ledCharacteristic, buttonCharacteristic)
         )
 
-        coroutineScope.launch {
+        screenModelScope.launch {
             server.startServer(listOf(serviceConfig), this)
 
             server.connections
                 .onEach { it.values.forEach { setUpProfile(it) } }
-                .launchIn(coroutineScope)
+                .launchIn(screenModelScope)
         }
     }
 
@@ -111,16 +111,16 @@ class ServerViewModel : ScreenModel, KoinComponent {
         ledCharacteristic.value.onEach {
             Napier.i("set led ${it.toDisplayString()}", tag = TAG)
             _state.value = _state.value.copy(isLedOn = it.contentEquals(byteArrayOf(0x01)))
-        }.launchIn(coroutineScope)
+        }.launchIn(screenModelScope)
 
         buttonCharacteristic.value.onEach {
             Napier.i("set button ${it.toDisplayString()}", tag = TAG)
             _state.value = _state.value.copy(isButtonPressed = it.contentEquals(byteArrayOf(0x01)))
-        }.launchIn(coroutineScope)
+        }.launchIn(screenModelScope)
     }
 
     fun advertise() {
-        coroutineScope.launch {
+        screenModelScope.launch {
             advertiser.advertise(AdvertisementSettings(
                 name = "Super Server",
                 uuid = BLINKY_SERVICE_UUID
@@ -130,7 +130,7 @@ class ServerViewModel : ScreenModel, KoinComponent {
     }
 
     fun stopAdvertise() {
-        coroutineScope.launch {
+        screenModelScope.launch {
             advertiser.stop()
             _state.value = _state.value.copy(isAdvertising = false)
         }
@@ -143,7 +143,7 @@ class ServerViewModel : ScreenModel, KoinComponent {
         } else {
             byteArrayOf(0x00)
         }
-        coroutineScope.launch {
+        screenModelScope.launch {
             buttonCharacteristic?.setValue(value)
         }
     }

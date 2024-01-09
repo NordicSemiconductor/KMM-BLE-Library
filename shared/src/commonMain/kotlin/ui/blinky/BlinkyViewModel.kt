@@ -32,9 +32,9 @@
 package ui.blinky
 
 import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.coroutineScope
-import client.ClientCharacteristic
+import cafe.adriel.voyager.core.model.screenModelScope
 import client.Client
+import client.ClientCharacteristic
 import com.benasher44.uuid.uuidFrom
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -61,8 +61,8 @@ class BlinkyViewModel(
     private lateinit var ledCharacteristic: ClientCharacteristic
 
     init {
-        coroutineScope.launch {
-            client.connect(device, coroutineScope)
+        screenModelScope.launch {
+            client.connect(device, screenModelScope)
 
             val services = client.discoverServices()
 
@@ -76,12 +76,12 @@ class BlinkyViewModel(
                     it
                 )
                 )  }
-                .launchIn(coroutineScope)
+                .launchIn(screenModelScope)
         }
     }
 
     fun turnLed() {
-        coroutineScope.launch {
+        screenModelScope.launch {
             try {
                 if (state.value.isLedOn) {
                     _state.value = _state.value.copy(isLedOn = false)
@@ -97,7 +97,7 @@ class BlinkyViewModel(
     }
 
     override fun onDispose() {
-        coroutineScope.launch {
+        screenModelScope.launch {
             client.disconnect()
         }
         super.onDispose()

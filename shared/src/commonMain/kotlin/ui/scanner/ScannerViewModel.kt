@@ -32,7 +32,7 @@
 package ui.scanner
 
 import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.coroutineScope
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -52,6 +52,6 @@ class ScannerViewModel : ScreenModel, KoinComponent {
     init {
         scanner.scan()
             .onEach { _state.value = (_state.value + it).distinctBy { it.address } }
-            .launchIn(coroutineScope)
+            .launchIn(screenModelScope)
     }
 }
