@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":lib"))
     implementation(project(":shared"))
 
     implementation("io.insert-koin:koin-core:3.4.3")
