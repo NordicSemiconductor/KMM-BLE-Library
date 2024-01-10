@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000205">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: publish" time="145.468059">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: releaseStagingRepositories" time="247.021352">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>

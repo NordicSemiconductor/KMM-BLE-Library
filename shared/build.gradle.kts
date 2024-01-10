@@ -1,3 +1,5 @@
+import no.nordicsemi.android.buildlogic.getVersionNameFromTags
+
 /*
  * Copyright (c) 2023, Nordic Semiconductor
  * All rights reserved.
@@ -32,12 +34,13 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.nordic.library)
     alias(libs.plugins.nordic.nexus)
     kotlin("native.cocoapods")
 }
 
 group = "no.nordicsemi.kmm"
+version = getVersionNameFromTags()
 
 nordicNexusPublishing {
     POM_ARTIFACT_ID = "ble"
@@ -55,8 +58,6 @@ nordicNexusPublishing {
 }
 
 kotlin {
-    androidTarget()
-
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -66,9 +67,9 @@ kotlin {
     }
 
     cocoapods {
-        version = "1.0.0"
-        summary = "Some description for the Shared Module"
-        homepage = "Link to the Shared Module homepage"
+        version = "0.0.0"
+        summary = "Nordic Kotlin Multiplatform Library for BLE."
+        homepage = "https://github.com/NordicSemiconductor/KMM-BLE-Library"
         ios.deploymentTarget = "14.1"
         podfile = project.file("../iosApp/Podfile")
         framework {
@@ -121,16 +122,12 @@ kotlin {
 }
 
 android {
-    compileSdk = (findProperty("android.compileSdk") as String).toInt()
     namespace = "no.nordicsemi.kmm.ble"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
-    defaultConfig {
-        minSdk = (findProperty("android.minSdk") as String).toInt()
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -138,4 +135,49 @@ android {
     kotlin {
         jvmToolchain(17)
     }
+}
+
+//FIXME: For some reason nordic.nexus plugin is not working for kmm project.
+signing {
+    sign(publishing.publications)
+}
+
+publishing {
+    publications.withType(MavenPublication::class) {
+        groupId = "no.nordicsemi.kmm"
+        artifactId = "ble"
+        version = getVersionNameFromTags()
+
+        pom {
+            name.set("Nordic Kotlin Multiplatform Library for BLE.")
+            description.set("Nordic Kotlin Multiplatform Library for BLE.")
+            url.set("https://github.com/NordicSemiconductor/KMM-BLE-Library")
+
+            licenses {
+                license {
+                    name.set("BSD-3-Clause")
+                    url.set("http://opensource.org/licenses/BSD-3-Clause")
+                }
+            }
+            developers {
+                developer {
+                    id.set("mag")
+                    name.set("Mobile Applications Group")
+                    email.set("mag@nordicsemi.no")
+                }
+            }
+            organization {
+                name.set("Nordic Semiconductor ASA")
+            }
+            scm {
+                connection.set("https://github.com/NordicSemiconductor/KMM-BLE-Library")
+                developerConnection.set("scm:git@github.com:NordicPlayground/KMM-BLE-Library.git")
+                url.set("scm:git@github.com:NordicPlayground/KMM-BLE-Library.git")
+            }
+        }
+    }
+}
+
+afterEvaluate {
+    tasks.getByName("signMavenPublicationPublication").dependsOn(tasks.getByName("publishAndroidReleasePublicationToMavenRepository"))
 }
