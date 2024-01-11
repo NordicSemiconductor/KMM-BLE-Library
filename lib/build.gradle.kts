@@ -83,8 +83,6 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.kotlinx.coroutines.core)
-                implementation(libs.koin.core)
-                implementation(libs.koin.compose)
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
@@ -107,6 +105,7 @@ kotlin {
                 implementation(libs.nordic.blek.server)
                 implementation(libs.nordic.permissions.ble)
                 implementation(libs.nordic.permissions.internet)
+                implementation(libs.androidx.startup)
             }
         }
         val iosX64Main by getting

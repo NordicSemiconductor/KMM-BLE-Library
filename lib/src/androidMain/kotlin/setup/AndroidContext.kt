@@ -29,8 +29,8 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package scanner
+package setup
 
-import org.koin.core.module.Module
+import android.content.Context
 
-expect val ScannerModule: Module
+internal lateinit var applicationContext: Context

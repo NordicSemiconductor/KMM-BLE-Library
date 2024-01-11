@@ -29,25 +29,18 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package scanner
+package di
 
-import advertisement.IOSServer
-import advertisement.IOSServerWrapper
+import BleFactory
 import advertisement.Advertiser
-import client.IOSClient
-import client.IOSClientWrapper
 import client.Client
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import server.Server
-import server.NotificationsRecords
 
-actual val ScannerModule: Module = module {
-    single { IOSClientWrapper(IOSClient()) }
-    single { Scanner(get()) }
-    single { Client(get()) }
-    single { NotificationsRecords() }
-    single { IOSServerWrapper(IOSServer(get())) }
-    single { Server(get()) }
-    single { Advertiser(get()) }
+internal val ScannerModule: Module = module {
+    single { BleFactory.provideScanner() }
+    single { BleFactory.provideClient() }
+    single { BleFactory.provideAdvertiser() }
+    single { BleFactory.provideServer() }
 }

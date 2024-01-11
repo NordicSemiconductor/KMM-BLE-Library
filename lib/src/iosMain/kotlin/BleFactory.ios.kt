@@ -29,16 +29,43 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package di
+import advertisement.Advertiser
+import advertisement.IOSServer
+import advertisement.IOSServerWrapper
+import client.Client
+import client.IOSClient
+import client.IOSClientWrapper
+import scanner.Scanner
+import server.NotificationsRecords
+import server.Server
 
-import org.koin.core.context.startKoin
-import org.koin.dsl.KoinAppDeclaration
+//TODO: check if something needs to be a singletone
+actual object BleFactory {
+    actual fun provideScanner(): Scanner {
+        return Scanner(provideIOSClientWrapper())
+    }
 
-fun initKoin(appDeclaration: KoinAppDeclaration) = startKoin {
-    appDeclaration()
-    modules(
-        ScannerModule,
-    )
+    actual fun provideAdvertiser(): Advertiser {
+        return Advertiser(provideIOSServerWrapper())
+    }
+
+    actual fun provideClient(): Client {
+        return Client(provideIOSClientWrapper())
+    }
+
+    actual fun provideServer(): Server {
+        return Server(provideIOSServerWrapper())
+    }
+
+    private fun provideNotificationRecords(): NotificationsRecords {
+        return NotificationsRecords()
+    }
+
+    private fun provideIOSServerWrapper(): IOSServerWrapper {
+        return IOSServerWrapper(IOSServer(provideNotificationRecords()))
+    }
+
+    private fun provideIOSClientWrapper(): IOSClientWrapper {
+        return IOSClientWrapper(IOSClient())
+    }
 }
-
-fun initKoin() = initKoin {}

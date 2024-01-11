@@ -29,16 +29,19 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package di
+package setup
 
-import org.koin.core.context.startKoin
-import org.koin.dsl.KoinAppDeclaration
+import android.content.Context
+import androidx.startup.Initializer
 
-fun initKoin(appDeclaration: KoinAppDeclaration) = startKoin {
-    appDeclaration()
-    modules(
-        ScannerModule,
-    )
+object Nordic
+
+class BleInitializer : Initializer<Nordic> {
+
+    override fun create(context: Context): Nordic {
+        applicationContext = context.applicationContext
+        return Nordic
+    }
+
+    override fun dependencies(): List<Class<out Initializer<*>>> = emptyList()
 }
-
-fun initKoin() = initKoin {}

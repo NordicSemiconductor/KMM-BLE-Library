@@ -1,3 +1,8 @@
+import advertisement.Advertiser
+import client.Client
+import scanner.Scanner
+import server.Server
+
 /*
  * Copyright (c) 2023, Nordic Semiconductor
  * All rights reserved.
@@ -29,16 +34,13 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package di
+expect object BleFactory {
 
-import org.koin.core.context.startKoin
-import org.koin.dsl.KoinAppDeclaration
+    fun provideScanner(): Scanner
 
-fun initKoin(appDeclaration: KoinAppDeclaration) = startKoin {
-    appDeclaration()
-    modules(
-        ScannerModule,
-    )
+    fun provideAdvertiser(): Advertiser
+
+    fun provideClient(): Client
+
+    fun provideServer(): Server
 }
-
-fun initKoin() = initKoin {}

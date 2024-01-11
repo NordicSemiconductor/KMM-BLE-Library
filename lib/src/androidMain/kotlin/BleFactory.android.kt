@@ -29,17 +29,26 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package scanner
-
 import advertisement.Advertiser
 import client.Client
-import org.koin.core.module.Module
-import org.koin.dsl.module
+import scanner.Scanner
 import server.Server
+import setup.applicationContext
 
-actual val ScannerModule: Module = module {
-    single { Scanner(get()) }
-    single { Client(get()) }
-    single { Server(get()) }
-    single { Advertiser(get()) }
+actual object BleFactory {
+    actual fun provideScanner(): Scanner {
+        return Scanner(applicationContext)
+    }
+
+    actual fun provideAdvertiser(): Advertiser {
+        return Advertiser(applicationContext)
+    }
+
+    actual fun provideClient(): Client {
+        return Client(applicationContext)
+    }
+
+    actual fun provideServer(): Server {
+        return Server(applicationContext)
+    }
 }

@@ -31,9 +31,7 @@
 
 package advertisement
 
-import org.koin.core.component.KoinComponent
-
-actual class Advertiser(private val server: IOSServerWrapper) : KoinComponent {
+actual class Advertiser(private val server: IOSServerWrapper) {
 
     actual suspend  fun advertise(settings: AdvertisementSettings) {
         server.value.advertise(settings)
