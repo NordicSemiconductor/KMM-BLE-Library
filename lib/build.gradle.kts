@@ -36,6 +36,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.nordic.library)
     alias(libs.plugins.nordic.nexus)
+    alias(libs.plugins.kmm.ios.publish)
     kotlin("native.cocoapods")
 }
 
@@ -67,7 +68,7 @@ kotlin {
     }
 
     cocoapods {
-        version = "0.0.0"
+        version = getVersionNameFromTags()
         summary = "Nordic Kotlin Multiplatform Library for BLE."
         homepage = "https://github.com/NordicSemiconductor/KMM-BLE-Library"
         ios.deploymentTarget = "14.1"
@@ -133,6 +134,13 @@ android {
     }
     kotlin {
         jvmToolchain(17)
+    }
+}
+
+multiplatformSwiftPackage {
+    swiftToolsVersion("5.3")
+    targetPlatforms {
+        iOS { v("13") }
     }
 }
 

@@ -13,6 +13,7 @@ iosApp/iosApp.xcworkspace/*
 iosApp/iosApp.xcodeproj/*
 !iosApp/iosApp.xcodeproj/project.pbxproj
 shared/shared.podspec
+/lib/swiftpackage
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/androidstudio

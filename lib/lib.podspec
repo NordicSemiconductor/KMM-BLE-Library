@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'lib'
-    spec.version                  = '0.0.0'
+    spec.version                  = '0.0.1'
     spec.homepage                 = 'https://github.com/NordicSemiconductor/KMM-BLE-Library'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''

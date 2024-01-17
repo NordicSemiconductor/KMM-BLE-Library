@@ -41,4 +41,5 @@ plugins {
     alias(libs.plugins.nordic.hilt).apply(false)
     alias(libs.plugins.hilt).apply(false)
     alias(libs.plugins.nordic.nexus).apply(false)
+    alias(libs.plugins.kmm.ios.publish)
 }
