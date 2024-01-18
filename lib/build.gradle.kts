@@ -142,6 +142,10 @@ multiplatformSwiftPackage {
     targetPlatforms {
         iOS { v("13") }
     }
+    packageName("KMM-BLE-Library")
+    zipFileName("KMM-BLE-Library")
+    distributionMode { remote("https://github.com/NordicSemiconductor/KMM-BLE-Library") }
+    outputDirectory(rootDir)
 }
 
 //FIXME: For some reason nordic.nexus plugin is not working for kmm project.
