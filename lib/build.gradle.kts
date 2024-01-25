@@ -182,8 +182,8 @@ publishing {
             }
             scm {
                 connection.set("https://github.com/NordicSemiconductor/KMM-BLE-Library")
-                developerConnection.set("scm:git@github.com:NordicPlayground/KMM-BLE-Library.git")
-                url.set("scm:git@github.com:NordicPlayground/KMM-BLE-Library.git")
+                developerConnection.set("scm:git@github.com:NordicSemiconductor/KMM-BLE-Library.git")
+                url.set("scm:git@github.com:NordicSemiconductor/KMM-BLE-Library.git")
             }
         }
     }
