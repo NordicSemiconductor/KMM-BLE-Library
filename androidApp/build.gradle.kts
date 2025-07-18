@@ -44,9 +44,9 @@ dependencies {
     implementation(project(":lib"))
     implementation(project(":shared"))
 
-    implementation("io.insert-koin:koin-core:3.4.3")
-    implementation("io.insert-koin:koin-android:3.4.3")
-    implementation("io.github.aakira:napier:2.6.1")
+    implementation("io.insert-koin:koin-core:4.1.0")
+    implementation("io.insert-koin:koin-android:4.1.0")
+    implementation("io.github.aakira:napier:2.7.1")
 
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.android)
