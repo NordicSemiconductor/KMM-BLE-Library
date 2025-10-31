@@ -35,9 +35,9 @@ import android.annotation.SuppressLint
 import com.benasher44.uuid.Uuid
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import no.nordicsemi.android.common.core.DataByteArray
 import no.nordicsemi.android.kotlin.ble.client.main.service.ClientBleGattCharacteristic
 import no.nordicsemi.android.kotlin.ble.core.data.BleWriteType
+import no.nordicsemi.android.kotlin.ble.core.data.util.DataByteArray
 
 @SuppressLint("MissingPermission")
 actual class ClientCharacteristic(private val characteristic: ClientBleGattCharacteristic) {

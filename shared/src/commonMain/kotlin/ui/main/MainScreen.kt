@@ -37,6 +37,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Router
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -48,6 +52,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -79,10 +84,9 @@ class MainScreen : Screen {
                 }) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(StringConst.START, style = MaterialTheme.typography.labelLarge)
-
                         Icon(
-                            painter = painterResource("play.xml"),
-                            contentDescription = ""
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = "Start"
                         )
                     }
                 }
@@ -91,7 +95,7 @@ class MainScreen : Screen {
             Column(modifier = Modifier.padding(it).padding(16.dp)) {
 
                 ChooseYourSideView(
-                    icon = painterResource("phone.xml"),
+                    icon = rememberVectorPainter(Icons.Default.Phone),
                     info = StringConst.CLIENT,
                     isSelected = isClientSelected.value,
                     selectAction = { isClientSelected.value = true },
@@ -100,7 +104,7 @@ class MainScreen : Screen {
                 Spacer(modifier = Modifier.size(16.dp))
 
                 ChooseYourSideView(
-                    icon = painterResource("dk.xml"),
+                    icon = rememberVectorPainter(Icons.Default.Router),
                     info = StringConst.SERVER,
                     isSelected = !isClientSelected.value,
                     selectAction = { isClientSelected.value = false },

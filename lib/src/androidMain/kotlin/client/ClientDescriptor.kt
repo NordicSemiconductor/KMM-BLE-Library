@@ -32,7 +32,7 @@
 package client
 
 import android.annotation.SuppressLint
-import no.nordicsemi.android.common.core.DataByteArray
+import no.nordicsemi.android.kotlin.ble.core.data.util.DataByteArray
 import no.nordicsemi.android.kotlin.ble.client.main.service.ClientBleGattDescriptor
 
 @SuppressLint("MissingPermission")

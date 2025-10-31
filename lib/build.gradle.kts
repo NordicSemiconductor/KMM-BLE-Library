@@ -34,29 +34,14 @@ import no.nordicsemi.android.buildlogic.getVersionNameFromTags
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.nordic.library)
-    alias(libs.plugins.nordic.nexus)
     alias(libs.plugins.kmm.ios.publish)
     kotlin("native.cocoapods")
 }
 
 group = "no.nordicsemi.kmm"
 version = getVersionNameFromTags()
-
-nordicNexusPublishing {
-    POM_ARTIFACT_ID = "ble"
-    POM_NAME = "Nordic Kotlin Multiplatform Library for BLE."
-
-    POM_DESCRIPTION = "Nordic Kotlin Multiplatform Library for BLE."
-    POM_URL = "https://github.com/NordicSemiconductor/KMM-BLE-Library"
-    POM_SCM_URL = "https://github.com/NordicSemiconductor/KMM-BLE-Library"
-    POM_SCM_CONNECTION = "scm:git@github.com:NordicPlayground/KMM-BLE-Library.git"
-    POM_SCM_DEV_CONNECTION = "scm:git@github.com:NordicPlayground/KMM-BLE-Library.git"
-
-    POM_DEVELOPER_ID = "syzi"
-    POM_DEVELOPER_NAME = "Sylwester Zieliński"
-    POM_DEVELOPER_EMAIL = "sylwester.zielinski@nordicsemi.no"
-}
 
 kotlin {
     iosX64()
@@ -100,12 +85,12 @@ kotlin {
                 api(libs.androidx.activity.compose)
                 api(libs.androidx.appcompat)
                 api(libs.androidx.core.ktx)
-                implementation(libs.nordic.blek.scanner)
-                implementation(libs.nordic.blek.client)
-                implementation(libs.nordic.blek.advertiser)
-                implementation(libs.nordic.blek.server)
-                implementation(libs.nordic.permissions.ble)
-                implementation(libs.nordic.permissions.internet)
+                implementation("no.nordicsemi.android.kotlin.ble:scanner:1.3.1")
+                implementation("no.nordicsemi.android.kotlin.ble:client:1.3.1")
+                implementation("no.nordicsemi.android.kotlin.ble:advertiser:1.3.1")
+                implementation("no.nordicsemi.android.kotlin.ble:server:1.3.1")
+                implementation("no.nordicsemi.android.common:permissions-ble:2.6.2")
+                implementation("no.nordicsemi.android.common:permissions-internet:2.6.2")
                 implementation(libs.androidx.startup)
             }
         }
@@ -146,50 +131,4 @@ multiplatformSwiftPackage {
     zipFileName("KMM-BLE-Library")
     distributionMode { remote("https://github.com/NordicSemiconductor/KMM-BLE-Library") }
     outputDirectory(rootDir)
-}
-
-//FIXME: For some reason nordic.nexus plugin is not working for kmm project.
-signing {
-    sign(publishing.publications)
-}
-
-publishing {
-    publications.withType(MavenPublication::class) {
-        groupId = "no.nordicsemi.kmm"
-        artifactId = "ble"
-        version = getVersionNameFromTags()
-
-        pom {
-            name.set("Nordic Kotlin Multiplatform Library for BLE.")
-            description.set("Nordic Kotlin Multiplatform Library for BLE.")
-            url.set("https://github.com/NordicSemiconductor/KMM-BLE-Library")
-
-            licenses {
-                license {
-                    name.set("BSD-3-Clause")
-                    url.set("http://opensource.org/licenses/BSD-3-Clause")
-                }
-            }
-            developers {
-                developer {
-                    id.set("mag")
-                    name.set("Mobile Applications Group")
-                    email.set("mag@nordicsemi.no")
-                }
-            }
-            organization {
-                name.set("Nordic Semiconductor ASA")
-            }
-            scm {
-                connection.set("https://github.com/NordicSemiconductor/KMM-BLE-Library")
-                developerConnection.set("scm:git@github.com:NordicSemiconductor/KMM-BLE-Library.git")
-                url.set("scm:git@github.com:NordicSemiconductor/KMM-BLE-Library.git")
-            }
-        }
-    }
-}
-
-afterEvaluate {
-    tasks.getByName("signMavenPublicationPublication").dependsOn(tasks.getByName("publishAndroidReleasePublicationToMavenRepository"))
-    tasks.getByName("signMavenPublicationPublication").dependsOn(tasks.getByName("publishAndroidReleasePublicationToMavenLocal"))
 }

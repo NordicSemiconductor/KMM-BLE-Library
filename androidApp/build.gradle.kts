@@ -30,6 +30,8 @@
  */
 
 plugins {
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.nordic.application.compose)
     alias(libs.plugins.nordic.hilt)
 }
@@ -44,24 +46,24 @@ dependencies {
     implementation(project(":lib"))
     implementation(project(":shared"))
 
-    implementation("io.insert-koin:koin-core:3.4.3")
-    implementation("io.insert-koin:koin-android:3.4.3")
-    implementation("io.github.aakira:napier:2.6.1")
+    implementation(libs.koin.core)
+    implementation("io.insert-koin:koin-android:4.1.1")
+    implementation(libs.kmm.logs)
 
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.android)
 
-    implementation(libs.nordic.blek.scanner)
+    implementation("no.nordicsemi.android.kotlin.ble:scanner:1.3.1")
 
-    implementation(libs.nordic.theme)
-    implementation(libs.nordic.navigation)
-    implementation(libs.nordic.permissions.ble)
-    implementation(libs.nordic.logger)
+    implementation("no.nordicsemi.android.common:theme:2.6.2")
+    implementation("no.nordicsemi.android.common:navigation:2.6.2")
+    implementation("no.nordicsemi.android.common:permissions-ble:2.6.2")
+    implementation("no.nordicsemi.android.common:logger:2.6.2")
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.compose.material.iconsExtended)
+
 }

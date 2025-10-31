@@ -31,6 +31,7 @@
 
 plugins {
     alias(libs.plugins.kotlin.compose).apply(false)
+    alias(libs.plugins.compose.compiler).apply(false)
     alias(libs.plugins.kotlin.multiplatform).apply(false)
     alias(libs.plugins.kotlin.kapt).apply(false)
     alias(libs.plugins.android.application).apply(false)
@@ -40,6 +41,5 @@ plugins {
     alias(libs.plugins.nordic.application).apply(false)
     alias(libs.plugins.nordic.hilt).apply(false)
     alias(libs.plugins.hilt).apply(false)
-    alias(libs.plugins.nordic.nexus).apply(false)
     alias(libs.plugins.kmm.ios.publish)
 }
