@@ -33,6 +33,7 @@ package client
 
 import com.benasher44.uuid.uuidFrom
 import io.github.aakira.napier.Napier
+import kotlinx.cinterop.ObjCSignatureOverride
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -172,6 +173,7 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
         Napier.i("Discover characteristic: $", tag = TAG)
     }
 
+    @ObjCSignatureOverride
     override fun peripheral(
         peripheral: CBPeripheral,
         didDiscoverDescriptorsForCharacteristic: CBCharacteristic,
@@ -187,6 +189,7 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
         _bleState.value = central.state
     }
 
+    @ObjCSignatureOverride
     override fun centralManager(
         central: CBCentralManager,
         didFailToConnectPeripheral: CBPeripheral,
@@ -201,6 +204,7 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
         onDeviceConnected?.invoke(DeviceConnected)
     }
 
+    @ObjCSignatureOverride
     override fun centralManager(
         central: CBCentralManager,
         didDisconnectPeripheral: CBPeripheral,
@@ -210,6 +214,7 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
         onDeviceDisconnected?.invoke()
     }
 
+    @ObjCSignatureOverride
     override fun peripheral(
         peripheral: CBPeripheral,
         didUpdateValueForCharacteristic: CBCharacteristic,
@@ -224,6 +229,7 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
         )
     }
 
+    @ObjCSignatureOverride
     override fun peripheral(
         peripheral: CBPeripheral,
         didWriteValueForCharacteristic: CBCharacteristic,
@@ -238,6 +244,7 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
         )
     }
 
+    @ObjCSignatureOverride
     override fun peripheral(
         peripheral: CBPeripheral,
         didWriteValueForDescriptor: CBDescriptor,
@@ -252,6 +259,7 @@ class IOSClient : NSObject(), CBCentralManagerDelegateProtocol, CBPeripheralDele
         )
     }
 
+    @ObjCSignatureOverride
     override fun peripheral(
         peripheral: CBPeripheral,
         didUpdateValueForDescriptor: CBDescriptor,

@@ -32,6 +32,7 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.nordic.library)
     kotlin("native.cocoapods")
 }
@@ -39,6 +40,7 @@ plugins {
 group = "no.nordicsemi.kmm"
 
 kotlin {
+    jvmToolchain(21)
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -74,6 +76,7 @@ kotlin {
                 implementation(libs.kmm.uuid)
                 implementation(libs.kmm.logs)
                 implementation(libs.kmm.voyager)
+                implementation("cafe.adriel.voyager:voyager-screenmodel:1.0.1")
             }
         }
         val androidMain by getting {
@@ -81,12 +84,12 @@ kotlin {
                 api(libs.androidx.activity.compose)
                 api(libs.androidx.appcompat)
                 api(libs.androidx.core.ktx)
-                implementation(libs.nordic.blek.scanner)
-                implementation(libs.nordic.blek.client)
-                implementation(libs.nordic.blek.advertiser)
-                implementation(libs.nordic.blek.server)
-                implementation(libs.nordic.permissions.ble)
-                implementation(libs.nordic.permissions.internet)
+                implementation("no.nordicsemi.android.kotlin.ble:scanner:1.3.1")
+                implementation("no.nordicsemi.android.kotlin.ble:client:1.3.1")
+                implementation("no.nordicsemi.android.kotlin.ble:advertiser:1.3.1")
+                implementation("no.nordicsemi.android.kotlin.ble:server:1.3.1")
+                implementation("no.nordicsemi.android.common:permissions-ble:2.6.2")
+                implementation("no.nordicsemi.android.common:permissions-internet:2.6.2")
             }
         }
         val iosX64Main by getting
@@ -109,10 +112,10 @@ android {
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     kotlin {
-        jvmToolchain(17)
+        jvmToolchain(21)
     }
 }
