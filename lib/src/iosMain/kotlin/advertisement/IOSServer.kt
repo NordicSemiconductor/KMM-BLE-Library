@@ -34,6 +34,7 @@ package advertisement
 import client.toCBUUID
 import client.toUuid
 import io.github.aakira.napier.Napier
+import kotlinx.cinterop.ObjCSignatureOverride
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -138,6 +139,7 @@ class IOSServer(
 
     }
 
+    @ObjCSignatureOverride
     override fun peripheralManager(
         peripheral: CBPeripheralManager,
         central: CBCentral,
@@ -147,6 +149,7 @@ class IOSServer(
         notificationsRecords.addCentral(didSubscribeToCharacteristic.UUID.toUuid(), central)
     }
 
+    @ObjCSignatureOverride
     override fun peripheralManager(
         peripheral: CBPeripheralManager,
         central: CBCentral,
